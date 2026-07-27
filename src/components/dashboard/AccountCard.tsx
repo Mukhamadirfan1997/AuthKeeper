@@ -1,0 +1,89 @@
+import { useState } from 'react'
+import type { Account, OtpCode } from '@/types/account'
+
+interface AccountCardProps {
+  account: Account
+  otp: OtpCode | null
+  error?: string
+  remaining: number
+  onClick: () => void
+  onToggleFavorite: () => void
+  showIssuer?: boolean
+}
+
+export function AccountCard({ account, otp, error, remaining, onClick, onToggleFavorite, showIssuer = true }: AccountCardProps) {
+  const [copied, setCopied] = useState(false)
+
+  const copyCode = async (e: React.MouseEvent, code: string) => {
+    e.stopPropagation()
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // clipboard unavailable
+    }
+  }
+
+  const progress = otp ? (remaining / otp.total) * 100 : 100
+  const barColor =
+    remaining > 10 ? 'bg-emerald-500' : remaining > 5 ? 'bg-amber-500' : 'bg-red-500'
+
+  const hasClockSkew = otp && (otp.code_prev === otp.code_next)
+
+  return (
+    <div
+      onClick={onClick}
+      className="bg-bg-card rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform"
+    >
+      <div className="flex items-start justify-between mb-2">
+        <div>
+          <div className="flex items-center gap-2">
+            {showIssuer && <h3 className="text-text-primary font-semibold">{account.issuer}</h3>}
+            {hasClockSkew && (
+              <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded" title="Clock skew detected">
+                🕐
+              </span>
+            )}
+          </div>
+          <p className="text-text-secondary text-sm">{account.label}</p>
+        </div>
+        <button
+          onClick={(e) => { e.stopPropagation(); onToggleFavorite() }}
+          className={`text-lg ${account.favorite ? 'text-favorite' : 'text-text-secondary'}`}
+        >
+          ★
+        </button>
+      </div>
+      {error ? (
+        <div className="mt-2 text-danger text-sm flex items-center gap-1">
+          <span>⚠️</span> {error}
+        </div>
+      ) : otp && (
+        <div className="mt-2">
+          <div className="flex items-center gap-2">
+            <p className="text-otp-code text-3xl font-bold tracking-[0.25em] font-[monospace] flex-1">
+              {otp.code.slice(0, 3)} {otp.code.slice(3)}
+            </p>
+            <button
+              onClick={(e) => copyCode(e, otp.code)}
+              className="text-text-secondary hover:text-accent transition-colors text-sm px-2 py-1 rounded-lg hover:bg-slate-700/50"
+              title="Salin kode"
+            >
+              {copied ? '✅' : '📋'}
+            </button>
+          </div>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1 h-1.5 bg-slate-600 rounded-full overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-1000 ${barColor}`}
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <span className="text-text-secondary text-xs w-8 text-right">{remaining}s</span>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}

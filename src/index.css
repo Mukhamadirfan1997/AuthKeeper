@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg-primary: #0f172a;
+  --color-bg-card: #1e293b;
+  --color-bg-surface: #1e293b;
+  --color-text-primary: #f1f5f9;
+  --color-text-secondary: #94a3b8;
+  --color-accent: #6366f1;
+  --color-otp-code: #34d399;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-favorite: #facc15;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html.light {
+  --color-bg-primary: #f1f5f9;
+  --color-bg-card: #ffffff;
+  --color-bg-surface: #ffffff;
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-accent: #6366f1;
+  --color-otp-code: #059669;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+  --color-favorite: #eab308;
+}
+
+html.light input,
+html.light textarea,
+html.light select {
+  border-color: #cbd5e1 !important;
+}
+
+html.light .bg-slate-600 { background-color: #cbd5e1 !important; }
+html.light .bg-slate-700 { background-color: #e2e8f0 !important; }
+html.light .bg-slate-700\/80 { background-color: rgba(226,232,240,0.8) !important; }
+html.light .border-slate-600 { border-color: #cbd5e1 !important; }
+html.light .border-slate-600\/50 { border-color: rgba(203,213,225,0.5) !important; }
+html.light .border-slate-700 { border-color: #cbd5e1 !important; }
+html.light .text-slate-600 { color: #94a3b8 !important; }
+html.light .text-slate-700 { color: #64748b !important; }
+
+#root {
+  min-height: 100vh;
+}

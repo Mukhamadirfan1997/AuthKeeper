@@ -1,0 +1,11 @@
+{
+  "version": "1.0.0",
+  "notes": "Rilis perdana AuthKeeper",
+  "pub_date": "2026-07-27T00:00:00Z",
+  "platforms": {
+    "windows-x86_64": {
+      "signature": "",
+      "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/v1.0.0/AuthKeeper_1.0.0_x64-setup.exe"
+    }
+  }
+}
