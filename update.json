@@ -4,7 +4,7 @@
   "pub_date": "2026-07-28T00:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "TBD",
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUbmlGa3hYL1JWUHV0MlhXdTVFZ2t4Z0ZUZjh3T1lYdllWNmJqaFF5SDBFWCsydHlEQlJXNWhWUkE1OUs5aHFRWUVrNXBZdHMrSUFzRUlsdWs3ZzhJNzhjdFJVQUlHY2c0PQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjE3NDY0CWZpbGU6QXV0aEtlZXBlcl8xLjEuMF94NjQtc2V0dXAuZXhlCkVIOGxsM1lwTDl0RUJXUDBZMkNIQzNiTTJDalNJMWxiUFBVemtubWFFTndpV3FDYTM4c0hUWkVOaGMvakVCVnpMNnp4NEZ3aG5WUlF6QTl3ZVVuUkN3PT0K",
       "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.1.0/AuthKeeper_1.1.0_x64-setup.exe"
     }
   }
