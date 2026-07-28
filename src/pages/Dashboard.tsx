@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback, useRef } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { AccountCard } from '@/components/dashboard/AccountCard'
 import { NavBar } from '@/components/dashboard/NavBar'
 import { Sidebar } from '@/components/dashboard/Sidebar'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { accountService } from '@/services/accountService'
 import { totpService } from '@/services/totpService'
+import { getRemainingSeconds } from '@/utils/time'
 import type { Account, OtpCode, GenerateOtpAllResult } from '@/types/account'
 
 interface DashboardProps {
@@ -45,35 +46,25 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     }
   }, [])
 
-  const alignedInterval = useRef<ReturnType<typeof setInterval> | null>(null)
-
   useEffect(() => {
     loadAccounts()
     refreshOtps()
     const interval = setInterval(() => {
+      const rem = getRemainingSeconds(30)
       setRemainingMap((prev) => {
         const next: Record<number, number> = {}
-        Object.entries(prev).forEach(([id, rem]) => {
-          const newRem = rem - 1
-          next[Number(id)] = newRem <= 0 ? 30 : newRem
+        Object.keys(prev).forEach((id) => {
+          next[Number(id)] = rem
         })
         return next
       })
+      if (rem === 30) {
+        refreshOtps()
+      }
     }, 1000)
-
-    const now = Date.now()
-    const periodMs = 30 * 1000
-    const delay = periodMs - (now % periodMs) + 100
-
-    const alignTimeout = setTimeout(() => {
-      refreshOtps()
-      alignedInterval.current = setInterval(refreshOtps, periodMs)
-    }, delay)
 
     return () => {
       clearInterval(interval)
-      clearTimeout(alignTimeout)
-      if (alignedInterval.current) clearInterval(alignedInterval.current)
     }
   }, [loadAccounts, refreshOtps])
 

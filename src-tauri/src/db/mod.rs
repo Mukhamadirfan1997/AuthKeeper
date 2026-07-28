@@ -52,6 +52,7 @@ impl Database {
         self.migrate_v1_to_v3()?;
         self.migrate_v4()?;
         self.migrate_v5()?;
+        self.migrate_v6()?;
 
         Ok(())
     }
@@ -235,6 +236,75 @@ impl Database {
             )
             .map_err(|e| e.to_string())?;
         Ok(k)
+    }
+
+    fn migrate_v6(&self) -> Result<()> {
+        let version: i32 = self
+            .conn
+            .pragma_query_value(None, "user_version", |row| row.get(0))?;
+
+        if version >= 6 {
+            return Ok(());
+        }
+
+        self.conn.execute_batch(
+            "
+            CREATE TABLE IF NOT EXISTS categories (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL UNIQUE,
+                icon TEXT,
+                color TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
+            CREATE TABLE IF NOT EXISTS account_categories (
+                account_id INTEGER NOT NULL,
+                category_id INTEGER NOT NULL,
+                PRIMARY KEY (account_id, category_id),
+                FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS password_vault (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT NOT NULL,
+                username TEXT,
+                password TEXT NOT NULL,
+                url TEXT,
+                icon TEXT,
+                note TEXT,
+                category_id INTEGER,
+                favorite INTEGER NOT NULL DEFAULT 0,
+                last_used_at TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+            );
+
+            CREATE TABLE IF NOT EXISTS secure_notes (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                title TEXT NOT NULL,
+                content TEXT NOT NULL,
+                icon TEXT,
+                category_id INTEGER,
+                favorite INTEGER NOT NULL DEFAULT 0,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
+            );
+
+            INSERT INTO categories (name, icon, color) VALUES ('Umum', '📁', '#6366f1');
+            INSERT INTO categories (name, icon, color) VALUES ('Email', '📧', '#3b82f6');
+            INSERT INTO categories (name, icon, color) VALUES ('Social Media', '🌐', '#8b5cf6');
+            INSERT INTO categories (name, icon, color) VALUES ('Finance', '💰', '#10b981');
+            INSERT INTO categories (name, icon, color) VALUES ('Work', '💼', '#f59e0b');
+            ",
+        )?;
+
+        self.conn.pragma_update(None, "user_version", 6)?;
+
+        Ok(())
     }
 
     pub fn get_encryption_key(&self) -> Result<[u8; 32], String> {

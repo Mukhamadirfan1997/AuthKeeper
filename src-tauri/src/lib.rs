@@ -12,6 +12,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(AuthState::new())
         .setup(|app| {
             let db_path = app
@@ -44,9 +45,30 @@ pub fn run() {
             commands::otp::generate_otp_all,
             commands::backup::export_backup,
             commands::backup::import_backup,
+            commands::category::get_categories,
+            commands::category::create_category,
+            commands::category::update_category,
+            commands::category::delete_category,
+            commands::category::get_account_categories,
+            commands::category::assign_category_to_account,
+            commands::category::unassign_category_from_account,
             commands::migration::parse_migration_qr,
+            commands::note::get_notes,
+            commands::note::get_note,
+            commands::note::create_note,
+            commands::note::update_note,
+            commands::note::delete_note,
+            commands::note::toggle_note_favorite,
+            commands::note::search_notes,
             commands::settings::get_settings,
             commands::settings::update_settings,
+            commands::vault::get_vault_entries,
+            commands::vault::get_vault_entry,
+            commands::vault::create_vault_entry,
+            commands::vault::update_vault_entry,
+            commands::vault::delete_vault_entry,
+            commands::vault::toggle_vault_favorite,
+            commands::vault::search_vault_entries,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

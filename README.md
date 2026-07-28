@@ -32,40 +32,42 @@ Aplikasi Desktop Offline Manajemen TOTP — dibuat dengan Tauri 2.0 + React + Ty
 
 #### Enhancement: Auto-Updater
 - Ditambahkan `tauri-plugin-updater` untuk update otomatis
-- Saat update tersedia, dialog akan muncul otomatis
-- **File:** `src-tauri/Cargo.toml`, `src-tauri/src/lib.rs`, `src-tauri/tauri.conf.json`
+- Signing key sudah digenerate, public key di `tauri.conf.json`
+- Installer v1.0.0 sudah di-sign
+- `update.json` sudah diisi signature dan URL download
+- **File:** `src-tauri/Cargo.toml`, `src-tauri/src/lib.rs`, `src-tauri/tauri.conf.json`, `update.json`
 
 ## Persiapan Distribusi
 
 ### Build
 ```bash
 cd authkeeper
-npm install
-npm run tauri build
+$env:TAURI_SIGNING_PRIVATE_KEY = "<private key>"
+$env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "AuthKeeper2026!"
+npx tauri build
 ```
 
-### Setup Auto-Updater
+### Cara Rilis Baru (v1.0.1, v1.0.2, ...)
+1. Update versi di `src-tauri/tauri.conf.json` dan `update.json`
+2. Build dengan perintah di atas
+3. Buka GitHub → Releases → Create new release
+4. Upload installer `.exe` (dari `src-tauri/target/release/bundle/nsis/`)
+5. Generate signature:
+   ```
+   npx tauri signer sign -f <path_ke_private_key> <path_ke_installer>
+   ```
+6. Salin signature ke `update.json`
+7. Commit & push `update.json`
 
-Repo: `https://github.com/Mukhamadirfan1997/AuthKeeper`
+### Status Rilis v1.0.0
+- ✅ Kode sudah di-push ke GitHub
+- ✅ Installer sudah di-sign
+- ✅ `update.json` sudah diisi
+- ✅ Release v1.0.0 sudah dipublish dengan tag `V1.0.0` (V besar)
+- ✅ `update.json` sudah diperbaiki dengan URL yang benar
+- ✅ Download installer: `https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.0.0/AuthKeeper_1.0.0_x64-setup.exe`
 
-1. **Push kode ke GitHub** (pastikan `update.json` sudah di-commit di root repo)
-2. **Setiap rilis baru:**
-   ```bash
-   # Set environment variable untuk signing
-   $env:TAURI_SIGNING_PRIVATE_KEY = "<isi private key dari authkeeper-signing-key.txt>"
-   $env:TAURI_SIGNING_PRIVATE_KEY_PASSWORD = "AuthKeeper2026!"
-   
-   # Build
-   npx tauri build
-   ```
-3. **Upload file ke GitHub Release:**
-   - `AuthKeeper_<version>_x64-setup.exe` (installer NSIS)
-   - `AuthKeeper_<version>_x64-setup.exe.sig` (signature — generate dengan `npx tauri signer sign`)
-4. **Update `update.json`** di repo dengan informasi rilis baru (version, signature, url)
-5. **Push update.json** — aplikasi user akan otomatis mendeteksi update dari:
-   ```
-   https://raw.githubusercontent.com/Mukhamadirfan1997/AuthKeeper/main/update.json
-   ```
+**Untuk rilis berikutnya, gunakan tag format `V<version>` (V besar), contoh: `V1.0.1`**
 
 ### Code Signing (Windows SmartScreen)
 Tanpa sertifikat signing, Windows akan menampilkan peringatan "Unknown Publisher". Untuk menghilangkannya:
@@ -76,3 +78,7 @@ Tanpa sertifikat signing, Windows akan menampilkan peringatan "Unknown Publisher
 - **Private key signing** disimpan di `C:\Users\yudhi\AppData\Local\Temp\opencode\authkeeper-signing-key.txt` — JANGAN HILANGKAN!
 - Semua data user tersimpan lokal di `%APPDATA%\com.authkeeper.desktop\authkeeper.db`
 - Bundle identifier baru (`com.authkeeper.desktop`) akan membuat folder data baru — data dari identifier lama tidak otomatis terbawa
+
+---
+
+*Sesi 27 Juli 2026 — AuthKeeper siap didistribusikan.*

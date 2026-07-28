@@ -10,6 +10,10 @@ import { AccountDetail } from '@/pages/AccountDetail'
 import { AccountForm } from '@/pages/AccountForm'
 import { Settings as SettingsPage } from '@/pages/Settings'
 import { QRImport } from '@/pages/QRImport'
+import { VaultPage } from '@/pages/VaultPage'
+import { VaultForm } from '@/pages/VaultForm'
+import { NotesPage } from '@/pages/NotesPage'
+import { NoteForm } from '@/pages/NoteForm'
 import type { Settings } from '@/types/settings'
 
 type AppPage =
@@ -21,6 +25,10 @@ type AppPage =
   | { name: 'account-form'; mode: 'add' | 'edit'; id?: number }
   | { name: 'settings' }
   | { name: 'qr-import' }
+  | { name: 'vault' }
+  | { name: 'vault-form'; mode: 'add' | 'edit'; id?: number }
+  | { name: 'notes' }
+  | { name: 'note-form'; mode: 'add' | 'edit'; id?: number }
 
 function AppContent() {
   const { isAuthenticated, isFirstRun, isLoading, logout } = useAuth()
@@ -69,6 +77,26 @@ function AppContent() {
       case 'qr-import':
         setPage({ name: 'qr-import' })
         break
+      case 'vault':
+        setPage({ name: 'vault' })
+        break
+      case 'vault-form':
+        setPage({
+          name: 'vault-form',
+          mode: (params?.mode as 'add' | 'edit') || 'add',
+          id: params?.id ? Number(params.id) : undefined,
+        })
+        break
+      case 'notes':
+        setPage({ name: 'notes' })
+        break
+      case 'note-form':
+        setPage({
+          name: 'note-form',
+          mode: (params?.mode as 'add' | 'edit') || 'add',
+          id: params?.id ? Number(params.id) : undefined,
+        })
+        break
     }
   }
 
@@ -102,6 +130,28 @@ function AppContent() {
         <QRImport
           onBack={() => setPage({ name: 'dashboard' })}
           onDone={() => setPage({ name: 'dashboard' })}
+        />
+      )
+    case 'vault':
+      return <VaultPage onNavigate={navigate} />
+    case 'vault-form':
+      return (
+        <VaultForm
+          mode={page.mode}
+          entryId={page.id}
+          onBack={() => setPage({ name: 'vault' })}
+          onSaved={() => setPage({ name: 'vault' })}
+        />
+      )
+    case 'notes':
+      return <NotesPage onNavigate={navigate} />
+    case 'note-form':
+      return (
+        <NoteForm
+          mode={page.mode}
+          noteId={page.id}
+          onBack={() => setPage({ name: 'notes' })}
+          onSaved={() => setPage({ name: 'notes' })}
         />
       )
     default:

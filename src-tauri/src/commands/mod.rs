@@ -1,6 +1,9 @@
 pub mod account;
 pub mod auth;
 pub mod backup;
+pub mod category;
 pub mod migration;
+pub mod note;
 pub mod otp;
 pub mod settings;
+pub mod vault;

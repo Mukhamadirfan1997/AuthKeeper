@@ -11,3 +11,7 @@ export type Page =
   | 'account-detail'
   | 'account-form'
   | 'settings'
+  | 'vault'
+  | 'vault-form'
+  | 'notes'
+  | 'note-form'

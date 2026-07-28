@@ -1,13 +1,15 @@
 interface NavBarProps {
-  active: 'dashboard' | 'favorites' | 'settings'
-  onNavigate: (page: 'dashboard' | 'favorites' | 'settings') => void
+  active: string
+  onNavigate: (page: string) => void
 }
 
 export function NavBar({ active, onNavigate }: NavBarProps) {
   const tabs = [
-    { key: 'dashboard' as const, label: '🏠', text: 'Home' },
-    { key: 'favorites' as const, label: '⭐', text: 'Favorites' },
-    { key: 'settings' as const, label: '⚙️', text: 'Settings' },
+    { key: 'dashboard', label: '🏠', text: 'Home' },
+    { key: 'vault', label: '🔐', text: 'Vault' },
+    { key: 'notes', label: '📝', text: 'Notes' },
+    { key: 'favorites', label: '⭐', text: 'Fav' },
+    { key: 'settings', label: '⚙️', text: 'Settings' },
   ]
 
   return (

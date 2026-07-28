@@ -11,6 +11,8 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
   const items = [
     { key: 'dashboard', icon: '🏠', label: 'Home' },
     { key: 'favorites', icon: '⭐', label: 'Favorites' },
+    { key: 'vault', icon: '🔐', label: 'Vault' },
+    { key: 'notes', icon: '📝', label: 'Notes' },
     { key: 'qr-import', icon: '📷', label: 'Import QR' },
     { key: 'account-form', icon: '➕', label: 'Tambah' },
     { key: 'settings', icon: '⚙️', label: 'Settings' },

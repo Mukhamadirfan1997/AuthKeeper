@@ -2,8 +2,10 @@ import { useState, useEffect, useRef } from 'react'
 import jsQR from 'jsqr'
 import { invoke } from '@tauri-apps/api/core'
 import { accountService } from '@/services/accountService'
+import { categoryService } from '@/services/categoryService'
 import { parseOtpauthUri } from '@/utils/otpauth'
 import type { Algorithm, CreateAccountDTO, MigrationAccount, MigrationResult } from '@/types/account'
+import type { Category } from '@/types/category'
 
 interface AccountFormProps {
   mode: 'add' | 'edit'
@@ -22,9 +24,12 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
   const [note, setNote] = useState('')
   const [favorite, setFavorite] = useState(false)
   const [scanningQr, setScanningQr] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCatIds, setSelectedCatIds] = useState<number[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
+    categoryService.getCategories().then(setCategories).catch(() => {})
     if (mode === 'edit' && accountId) {
       accountService.getAccount(accountId).then((acc) => {
         setIssuer(acc.issuer)
@@ -36,6 +41,9 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
         setNote(acc.note || '')
         setFavorite(acc.favorite)
       })
+      categoryService.getAccountCategories(accountId).then((cats) => {
+        setSelectedCatIds(cats.map((c) => c.id))
+      }).catch(() => {})
     }
   }, [mode, accountId])
 
@@ -53,10 +61,27 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
     }
 
     try {
+      let savedId = accountId
       if (mode === 'add') {
-        await accountService.createAccount(data)
+        const created = await accountService.createAccount(data)
+        savedId = created.id
       } else if (accountId) {
         await accountService.updateAccount(accountId, data)
+      }
+
+      if (savedId) {
+        const current = await categoryService.getAccountCategories(savedId).catch(() => [])
+        const currentIds = current.map((c) => c.id)
+        for (const id of selectedCatIds) {
+          if (!currentIds.includes(id)) {
+            await categoryService.assignCategoryToAccount(savedId, id)
+          }
+        }
+        for (const id of currentIds) {
+          if (!selectedCatIds.includes(id)) {
+            await categoryService.unassignCategoryFromAccount(savedId, id)
+          }
+        }
       }
       onSaved()
     } catch (e) {
@@ -225,6 +250,30 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
             rows={3}
             className="w-full px-4 py-2.5 rounded-xl bg-bg-card text-text-primary placeholder-text-secondary border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent resize-none"
           />
+        </div>
+
+        <div>
+          <label className="text-text-secondary text-sm block mb-2">Kategori</label>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => {
+              const active = selectedCatIds.includes(cat.id)
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => {
+                    setSelectedCatIds((prev) =>
+                      active ? prev.filter((id) => id !== cat.id) : [...prev, cat.id]
+                    )
+                  }}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${
+                    active ? 'bg-accent text-white' : 'bg-bg-card text-text-secondary border border-slate-700'
+                  }`}
+                >
+                  {cat.icon} {cat.name}
+                </button>
+              )
+            })}
+          </div>
         </div>
 
         <label className="flex items-center gap-3 cursor-pointer">

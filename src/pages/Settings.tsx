@@ -5,9 +5,12 @@ import { authService } from '@/services/authService'
 import { settingsService } from '@/services/settingsService'
 import { Sidebar } from '@/components/dashboard/Sidebar'
 import { Numpad } from '@/components/common/Numpad'
+import { CategoryManager } from '@/pages/CategoryManager'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { invoke } from '@tauri-apps/api/core'
 import { save, open } from '@tauri-apps/plugin-dialog'
+import { check } from '@tauri-apps/plugin-updater'
+import { relaunch } from '@tauri-apps/plugin-process'
 
 interface SettingsProps {
   onBack: () => void
@@ -29,6 +32,9 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
   const [confirmPin, setConfirmPin] = useState('')
   const [changePinError, setChangePinError] = useState('')
   const [changePinSuccess, setChangePinSuccess] = useState('')
+  const [updateStatus, setUpdateStatus] = useState<'idle' | 'checking' | 'available' | 'downloading' | 'uptodate' | 'error'>('idle')
+  const [updateMsg, setUpdateMsg] = useState('')
+  const [showCategories, setShowCategories] = useState(false)
 
   useEffect(() => {
     authService.hasRecoveryKey().then(setHasRecovery).catch(() => {})
@@ -42,6 +48,28 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
     try {
       await settingsService.updateSettings({ auto_lock: val })
     } catch {}
+  }
+
+  const handleCheckUpdate = async () => {
+    setUpdateStatus('checking')
+    setUpdateMsg('')
+    try {
+      const update = await check()
+      if (!update) {
+        setUpdateStatus('uptodate')
+        setUpdateMsg('✅ Aplikasi sudah versi terbaru')
+        return
+      }
+      setUpdateStatus('available')
+      setUpdateMsg(`Versi ${update.version} tersedia!\n${update.body ? update.body : ''}`)
+      setUpdateStatus('downloading')
+      await update.downloadAndInstall()
+      setUpdateMsg('✅ Update berhasil diunduh. Aplikasi akan dimulai ulang...')
+      await relaunch()
+    } catch (e: any) {
+      setUpdateStatus('error')
+      setUpdateMsg(`❌ Gagal: ${String(e)}`)
+    }
   }
 
   const handleExport = async () => {
@@ -246,6 +274,13 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
             >
               📤 Import Backup
             </button>
+            <hr className="border-slate-700" />
+            <button
+              onClick={() => setShowCategories(true)}
+              className="w-full text-left text-text-primary hover:text-accent transition-colors"
+            >
+              🏷️ Kelola Kategori
+            </button>
             {backupMsg && (
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
                 <p className="text-emerald-400 text-xs whitespace-pre-line">{backupMsg}</p>
@@ -261,10 +296,33 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
 
         <section>
           <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">ℹ️ About</h2>
-          <div className="bg-bg-card rounded-xl p-4 space-y-2">
+          <div className="bg-bg-card rounded-xl p-4 space-y-3">
             <p className="text-text-primary font-semibold">AuthKeeper v1.0.0</p>
             <p className="text-text-secondary text-sm">Created by MUKHAMAD IRFAN</p>
             <p className="text-text-secondary text-sm">Tauri + React + TypeScript</p>
+            <hr className="border-slate-700" />
+            <button
+              onClick={handleCheckUpdate}
+              disabled={updateStatus === 'checking' || updateStatus === 'downloading'}
+              className="w-full text-left text-accent hover:text-accent/80 transition-colors disabled:text-text-secondary disabled:cursor-not-allowed"
+            >
+              {updateStatus === 'checking' ? '⏳ Memeriksa...' : updateStatus === 'downloading' ? '📥 Mengunduh...' : '🔄 Check for Updates'}
+            </button>
+            {updateMsg && (
+              <div className={`rounded-xl p-3 ${
+                updateStatus === 'error' ? 'bg-danger/10 border border-danger/30' :
+                updateStatus === 'uptodate' ? 'bg-emerald-500/10 border border-emerald-500/30' :
+                updateStatus === 'available' || updateStatus === 'downloading' ? 'bg-blue-500/10 border border-blue-500/30' :
+                ''
+              }`}>
+                <p className={`text-xs whitespace-pre-line ${
+                  updateStatus === 'error' ? 'text-danger' :
+                  updateStatus === 'uptodate' ? 'text-emerald-400' :
+                  updateStatus === 'available' || updateStatus === 'downloading' ? 'text-blue-400' :
+                  'text-text-secondary'
+                }`}>{updateMsg}</p>
+              </div>
+            )}
           </div>
         </section>
 
@@ -275,6 +333,8 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
           🔒 Lock App
         </button>
       </div>
+
+      {showCategories && <CategoryManager onClose={() => setShowCategories(false)} />}
 
       {showChangePin && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowChangePin(false)}>
