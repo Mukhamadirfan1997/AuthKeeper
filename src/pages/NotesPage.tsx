@@ -61,13 +61,13 @@ export function NotesPage({ onNavigate }: NotesPageProps) {
             onClick={() => { onNavigate('note-form', { mode: 'edit', id: String(selected.id) }); setSelected(null) }}
             className="flex-1 py-2.5 rounded-xl bg-accent/10 text-accent font-semibold border border-accent/30 hover:bg-accent/20 transition-colors"
           >
-            ✏️ Edit
+            ✏️ Ubah
           </button>
           <button
             onClick={async () => { await noteService.toggleFavorite(selected.id); load(); setSelected(null) }}
             className="flex-1 py-2.5 rounded-xl bg-slate-700 text-text-primary font-semibold hover:bg-slate-600 transition-colors"
           >
-            {selected.favorite ? '⭐ Unfavorite' : '⭐ Favorite'}
+            {selected.favorite ? '⭐ Hapus Favorit' : '⭐ Favorit'}
           </button>
         </div>
       </div>
@@ -77,7 +77,7 @@ export function NotesPage({ onNavigate }: NotesPageProps) {
   const mainContent = (
     <div className="flex-1 p-4 overflow-y-auto min-w-0 pb-20">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">📝 Secure Notes</h1>
+        <h1 className="text-xl font-bold">📝 Catatan</h1>
         <button
           onClick={() => onNavigate('note-form', { mode: 'add' })}
           className="bg-accent text-white w-10 h-10 rounded-xl text-2xl flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -130,7 +130,7 @@ export function NotesPage({ onNavigate }: NotesPageProps) {
         })}
         {filtered.length === 0 && (
           <p className="text-text-secondary text-center mt-8">
-            {notes.length === 0 ? 'Belum ada catatan. Tambah dengan tombol +' : 'Tidak ditemukan'}
+            {notes.length === 0 ? 'Belum ada catatan. Tekan + untuk menambah' : 'Tidak ditemukan'}
           </p>
         )}
       </div>

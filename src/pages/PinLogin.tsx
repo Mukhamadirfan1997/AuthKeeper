@@ -66,7 +66,7 @@ export function PinLogin() {
           <div className="text-5xl mb-4">✅</div>
           <h1 className="text-2xl font-bold text-text-primary mb-2">Kode Valid!</h1>
           <p className="text-text-secondary text-sm">
-            PIN telah direset. Buat PIN baru...
+            PIN sudah direset. Buat PIN baru...
           </p>
         </div>
       </div>
@@ -98,7 +98,7 @@ export function PinLogin() {
               onClick={() => { setShowRecovery(false); setRecoveryInput(''); setRecoveryError('') }}
               className="w-full max-w-xs py-2 text-text-secondary text-sm hover:text-text-primary transition-colors"
             >
-              ← Kembali ke login
+               ← Kembali ke masuk
             </button>
           </div>
         </div>
@@ -141,7 +141,7 @@ export function PinLogin() {
             onClick={() => { setShowRecovery(false); setRecoveryInput(''); setRecoveryError('') }}
             className="w-full max-w-xs py-2 text-text-secondary text-sm hover:text-text-primary transition-colors"
           >
-            ← Kembali ke login
+            ← Kembali ke masuk
           </button>
         </div>
       </div>

@@ -9,13 +9,13 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
   const { logout } = useAuth()
 
   const items = [
-    { key: 'dashboard', icon: '🏠', label: 'Home' },
-    { key: 'favorites', icon: '⭐', label: 'Favorites' },
-    { key: 'vault', icon: '🔐', label: 'Vault' },
-    { key: 'notes', icon: '📝', label: 'Notes' },
-    { key: 'qr-import', icon: '📷', label: 'Import QR' },
+    { key: 'dashboard', icon: '🏠', label: 'Beranda' },
+    { key: 'favorites', icon: '⭐', label: 'Favorit' },
+    { key: 'vault', icon: '🔐', label: 'Kata Sandi' },
+    { key: 'notes', icon: '📝', label: 'Catatan' },
+    { key: 'qr-import', icon: '📷', label: 'Impor QR' },
     { key: 'account-form', icon: '➕', label: 'Tambah' },
-    { key: 'settings', icon: '⚙️', label: 'Settings' },
+    { key: 'settings', icon: '⚙️', label: 'Pengaturan' },
   ]
 
   return (
@@ -48,7 +48,7 @@ export function Sidebar({ active, onNavigate }: SidebarProps) {
         className="flex items-center justify-center lg:justify-start gap-3 px-3 lg:px-4 py-2.5 mx-2 mt-4 rounded-xl text-text-secondary hover:text-danger transition-colors"
       >
         <span className="text-lg">🔒</span>
-        <span className="hidden lg:block text-sm">Lock</span>
+        <span className="hidden lg:block text-sm">Kunci</span>
       </button>
 
       <p className="hidden lg:block text-xs text-text-secondary text-center mt-4 px-4">

@@ -49,18 +49,18 @@ export function AccountDetail({ accountId, onBack, onEdit }: AccountDetailProps)
   if (deleted) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-text-secondary">Akun dihapus...</p>
+        <p className="text-text-secondary">Akun terhapus...</p>
       </div>
     )
   }
 
-  if (!account) return <div className="p-4 text-text-secondary">Loading...</div>
+    if (!account) return <div className="p-4 text-text-secondary">Memuat...</div>
 
   return (
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <button onClick={onBack} className="text-text-secondary text-lg">
-          ← Back
+          ← Kembali
         </button>
         <div className="flex gap-2">
           <button
@@ -73,7 +73,7 @@ export function AccountDetail({ accountId, onBack, onEdit }: AccountDetailProps)
             onClick={() => onEdit(account.id)}
             className="text-accent text-sm"
           >
-            ✏️ Edit
+            ✏️ Ubah
           </button>
         </div>
       </div>

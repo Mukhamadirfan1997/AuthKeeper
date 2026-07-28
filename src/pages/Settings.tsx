@@ -200,12 +200,12 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
             ←
           </button>
         )}
-        <h1 className="text-xl font-bold">Settings</h1>
+        <h1 className="text-xl font-bold">Pengaturan</h1>
       </div>
 
       <div className="space-y-6 max-w-lg">
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🔒 Security</h2>
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🔒 Keamanan</h2>
           <div className="bg-bg-card rounded-xl p-4 space-y-4">
             <button
               onClick={openChangePin}
@@ -214,7 +214,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
               Ganti PIN
             </button>
             <div className="flex items-center justify-between">
-              <span className="text-text-primary">Auto Lock</span>
+              <span className="text-text-primary">Kunci Otomatis</span>
               <select
                 value={autoLock}
                 onChange={(e) => handleAutoLockChange(Number(e.target.value))}
@@ -241,7 +241,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🎨 Appearance</h2>
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🎨 Tampilan</h2>
           <div className="bg-bg-card rounded-xl p-4 space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-text-primary">Theme</span>
@@ -260,19 +260,19 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">💾 Data</h2>
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">💾 Data & Cadangan</h2>
           <div className="bg-bg-card rounded-xl p-4 space-y-4">
             <button
               onClick={handleExport}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
             >
-              📥 Export Backup
+              📥 Cadangkan Data
             </button>
             <button
               onClick={handleImport}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
             >
-              📤 Import Backup
+              📤 Pulihkan Data
             </button>
             <hr className="border-slate-700" />
             <button
@@ -295,7 +295,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">ℹ️ About</h2>
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">ℹ️ Tentang</h2>
           <div className="bg-bg-card rounded-xl p-4 space-y-3">
             <p className="text-text-primary font-semibold">AuthKeeper v1.0.0</p>
             <p className="text-text-secondary text-sm">Created by MUKHAMAD IRFAN</p>
@@ -306,7 +306,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
               disabled={updateStatus === 'checking' || updateStatus === 'downloading'}
               className="w-full text-left text-accent hover:text-accent/80 transition-colors disabled:text-text-secondary disabled:cursor-not-allowed"
             >
-              {updateStatus === 'checking' ? '⏳ Memeriksa...' : updateStatus === 'downloading' ? '📥 Mengunduh...' : '🔄 Check for Updates'}
+              {updateStatus === 'checking' ? '⏳ Memeriksa...' : updateStatus === 'downloading' ? '📥 Mengunduh...' : '🔄 Periksa Pembaruan'}
             </button>
             {updateMsg && (
               <div className={`rounded-xl p-3 ${
@@ -330,7 +330,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
           onClick={logout}
           className="w-full py-3 rounded-xl bg-danger/10 text-danger font-semibold hover:bg-danger/20 transition-colors"
         >
-          🔒 Lock App
+          🔒 Kunci Aplikasi
         </button>
       </div>
 

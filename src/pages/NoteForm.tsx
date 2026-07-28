@@ -54,8 +54,8 @@ export function NoteForm({ mode, noteId, onBack, onSaved }: NoteFormProps) {
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex items-center justify-between mb-6">
         <button onClick={onBack} className="text-text-secondary text-lg">←</button>
-        <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Catatan' : 'Edit Catatan'}</h1>
-        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Save</button>
+        <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Catatan' : 'Ubah Catatan'}</h1>
+        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Simpan</button>
       </div>
 
       <div className="space-y-4 flex-1 flex flex-col">

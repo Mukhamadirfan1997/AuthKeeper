@@ -46,7 +46,7 @@ function AppContent() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p className="text-text-secondary">Loading...</p>
+        <p className="text-text-secondary">Memuat...</p>
       </div>
     )
   }

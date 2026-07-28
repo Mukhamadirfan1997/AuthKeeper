@@ -147,10 +147,10 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
           ←
         </button>
         <h1 className="text-xl font-bold">
-          {mode === 'add' ? 'Tambah Akun' : 'Edit Akun'}
+          {mode === 'add' ? 'Tambah Akun' : 'Ubah Akun'}
         </h1>
         <button onClick={handleSubmit} className="text-accent font-semibold">
-          💾 Save
+          💾 Simpan
         </button>
       </div>
 

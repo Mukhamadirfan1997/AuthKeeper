@@ -80,13 +80,13 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
     <div className="min-h-screen p-4">
       <div className="flex items-center justify-between mb-6">
         <button onClick={onBack} className="text-text-secondary text-lg">←</button>
-        <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Password' : 'Edit Password'}</h1>
-        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Save</button>
+        <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Kata Sandi' : 'Ubah Kata Sandi'}</h1>
+        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Simpan</button>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="text-text-secondary text-sm block mb-1">Nama</label>
+          <label className="text-text-secondary text-sm block mb-1">Nama / Layanan</label>
           <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Google, GitHub, dll"
             className="w-full px-4 py-2.5 rounded-xl bg-bg-card text-text-primary placeholder-text-secondary border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>
@@ -98,7 +98,7 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
         </div>
 
         <div>
-          <label className="text-text-secondary text-sm block mb-1">Password</label>
+          <label className="text-text-secondary text-sm block mb-1">Kata Sandi</label>
           <div className="flex gap-2">
             <div className="flex-1 relative">
               <input
@@ -137,7 +137,7 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
         </div>
 
         <div>
-          <label className="text-text-secondary text-sm block mb-1">URL (opsional)</label>
+          <label className="text-text-secondary text-sm block mb-1">Alamat Website (opsional)</label>
           <input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://"
             className="w-full px-4 py-2.5 rounded-xl bg-bg-card text-text-primary placeholder-text-secondary border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent" />
         </div>

@@ -66,12 +66,12 @@ export function CategoryManager({ onClose }: CategoryManagerProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div className="bg-bg-primary rounded-2xl p-6 w-[90%] max-w-md border border-slate-700 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-text-primary">🏷️ Kelola Kategori</h2>
+          <h2 className="text-lg font-bold text-text-primary">🏷️ Atur Kategori</h2>
           <button onClick={onClose} className="text-text-secondary text-lg">✕</button>
         </div>
 
         <div className="space-y-3 mb-6">
-          <p className="text-text-secondary text-xs">Tambah kategori baru</p>
+          <p className="text-text-secondary text-xs">Buat kategori baru</p>
           <div className="flex gap-2">
             <div className="relative">
               <select value={newIcon} onChange={(e) => setNewIcon(e.target.value)}

@@ -110,7 +110,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
             onClick={() => { onNavigate('vault-form', { mode: 'edit', id: String(selected.id) }); setSelected(null) }}
             className="flex-1 py-2.5 rounded-xl bg-accent/10 text-accent font-semibold border border-accent/30 hover:bg-accent/20 transition-colors"
           >
-            ✏️ Edit
+            ✏️ Ubah
           </button>
           <button
             onClick={async () => {
@@ -120,7 +120,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
             }}
             className="flex-1 py-2.5 rounded-xl bg-slate-700 text-text-primary font-semibold hover:bg-slate-600 transition-colors"
           >
-            {selected.favorite ? '⭐ Unfavorite' : '⭐ Favorite'}
+            {selected.favorite ? '⭐ Hapus Favorit' : '⭐ Favorit'}
           </button>
         </div>
       </div>
@@ -130,7 +130,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
   const mainContent = (
     <div className="flex-1 p-4 overflow-y-auto min-w-0 pb-20">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">🔐 Password Vault</h1>
+        <h1 className="text-xl font-bold">🔐 Kata Sandi</h1>
         <button
           onClick={() => onNavigate('vault-form', { mode: 'add' })}
           className="bg-accent text-white w-10 h-10 rounded-xl text-2xl flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -141,7 +141,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
 
       <input
         type="text"
-        placeholder="Cari password..."
+        placeholder="Cari kata sandi..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         className="w-full px-4 py-2.5 rounded-xl bg-bg-card text-text-primary placeholder-text-secondary border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent mb-3"
@@ -202,7 +202,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
         })}
         {filtered.length === 0 && (
           <p className="text-text-secondary text-center mt-8">
-            {entries.length === 0 ? 'Belum ada password. Tambah dengan tombol +' : 'Tidak ditemukan'}
+            {entries.length === 0 ? 'Belum ada kata sandi. Tekan + untuk menambah' : 'Tidak ditemukan'}
           </p>
         )}
       </div>

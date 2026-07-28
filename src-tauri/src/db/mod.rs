@@ -294,11 +294,11 @@ impl Database {
                 FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE SET NULL
             );
 
-            INSERT INTO categories (name, icon, color) VALUES ('Umum', '📁', '#6366f1');
+            INSERT INTO categories (name, icon, color) VALUES ('Sekolah', '🏫', '#6366f1');
             INSERT INTO categories (name, icon, color) VALUES ('Email', '📧', '#3b82f6');
-            INSERT INTO categories (name, icon, color) VALUES ('Social Media', '🌐', '#8b5cf6');
-            INSERT INTO categories (name, icon, color) VALUES ('Finance', '💰', '#10b981');
-            INSERT INTO categories (name, icon, color) VALUES ('Work', '💼', '#f59e0b');
+            INSERT INTO categories (name, icon, color) VALUES ('Sistem', '💻', '#8b5cf6');
+            INSERT INTO categories (name, icon, color) VALUES ('Keuangan', '💰', '#10b981');
+            INSERT INTO categories (name, icon, color) VALUES ('Lainnya', '📁', '#f59e0b');
             ",
         )?;
 

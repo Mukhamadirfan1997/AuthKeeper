@@ -5,11 +5,11 @@ interface NavBarProps {
 
 export function NavBar({ active, onNavigate }: NavBarProps) {
   const tabs = [
-    { key: 'dashboard', label: '🏠', text: 'Home' },
-    { key: 'vault', label: '🔐', text: 'Vault' },
-    { key: 'notes', label: '📝', text: 'Notes' },
-    { key: 'favorites', label: '⭐', text: 'Fav' },
-    { key: 'settings', label: '⚙️', text: 'Settings' },
+    { key: 'dashboard', label: '🏠', text: 'Beranda' },
+    { key: 'vault', label: '🔐', text: 'Sandi' },
+    { key: 'notes', label: '📝', text: 'Catatan' },
+    { key: 'favorites', label: '⭐', text: 'Favorit' },
+    { key: 'settings', label: '⚙️', text: 'Atur' },
   ]
 
   return (

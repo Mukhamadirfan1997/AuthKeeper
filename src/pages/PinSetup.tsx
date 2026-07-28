@@ -98,7 +98,7 @@ export function PinSetup() {
           <h1 className="text-2xl font-bold text-text-primary">PIN Tersimpan!</h1>
           <p className="text-text-secondary text-sm mt-2 mb-8">
             Simpan kode pemulihan ini di tempat aman.
-            <br />Tanpa kode ini, data tidak bisa dipulihkan jika lupa PIN.
+            <br />Tanpa kode ini, data tidak bisa dibuka kembali jika lupa PIN.
           </p>
 
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 mb-6 max-w-sm mx-auto">
@@ -117,7 +117,7 @@ export function PinSetup() {
           </div>
 
           <p className="text-text-secondary text-xs mb-8 max-w-xs mx-auto">
-            Kode ini tidak akan ditampilkan lagi.
+            Kode ini hanya ditampilkan sekali.
             Screenshot atau catat sekarang.
           </p>
 
@@ -144,7 +144,7 @@ export function PinSetup() {
 
       <div className={`transition-all duration-300 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <p className="text-text-secondary mb-6 text-sm text-center">
-          {step === 'create' ? 'Buat PIN 6 digit' : 'Masukkan ulang PIN'}
+          {step === 'create' ? 'Buat PIN 6 angka' : 'Masukkan ulang PIN'}
         </p>
 
         <div className="flex gap-3 justify-center mb-8">

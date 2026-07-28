@@ -94,7 +94,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div>
           {!isLarge && <h1 className="text-xl font-bold">AuthKeeper</h1>}
           {isLarge && <h1 className="text-xl font-bold">
-            {filter === 'favorites' ? '⭐ Favorites' : '🏠 Dashboard'}
+            {filter === 'favorites' ? '⭐ Favorit' : '🏠 Beranda'}
           </h1>}
           {accounts.length > 0 && (
             <p className="text-text-secondary text-xs mt-0.5">{accounts.length} akun tersimpan</p>
@@ -199,7 +199,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         {filtered.length === 0 && (
           <p className="text-text-secondary text-center mt-8">
             {accounts.length === 0
-              ? 'Belum ada akun. Tambah dengan tombol +'
+              ? 'Belum ada akun. Tekan + untuk menambah'
               : 'Tidak ada akun ditemukan'}
           </p>
         )}
