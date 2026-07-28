@@ -5,8 +5,10 @@ import { Sidebar } from '@/components/dashboard/Sidebar'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import { accountService } from '@/services/accountService'
 import { totpService } from '@/services/totpService'
+import { categoryService } from '@/services/categoryService'
 import { getRemainingSeconds } from '@/utils/time'
 import type { Account, OtpCode, GenerateOtpAllResult } from '@/types/account'
+import type { Category } from '@/types/category'
 
 interface DashboardProps {
   onNavigate: (page: string, params?: Record<string, string>) => void
@@ -20,12 +22,17 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [filter, setFilter] = useState<'all' | 'favorites'>('all')
   const [remainingMap, setRemainingMap] = useState<Record<number, number>>({})
   const [errorMap, setErrorMap] = useState<Record<number, string>>({})
+  const [accountCategories, setAccountCategories] = useState<Record<number, Category[]>>({})
   const [showWelcome, setShowWelcome] = useState(!localStorage.getItem('welcome_shown'))
 
   const loadAccounts = useCallback(async () => {
     try {
-      const data = await accountService.getAccounts()
+      const [data, catMap] = await Promise.all([
+        accountService.getAccounts(),
+        categoryService.getAllAccountCategories(),
+      ])
       setAccounts(data)
+      setAccountCategories(catMap)
     } catch (e) {
       console.error('Failed to load accounts', e)
     }
@@ -185,6 +192,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
                     error={errorMap[acc.id]}
                     remaining={remainingMap[acc.id] ?? 30}
                     showIssuer={false}
+                    categories={accountCategories[acc.id]}
                     onClick={() => onNavigate('account-detail', { id: String(acc.id) })}
                     onToggleFavorite={async () => {
                       await accountService.toggleFavorite(acc.id)

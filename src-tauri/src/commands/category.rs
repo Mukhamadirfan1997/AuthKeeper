@@ -1,5 +1,6 @@
 use crate::db::Database;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::sync::Mutex;
 use tauri::State;
 
@@ -191,4 +192,42 @@ pub fn unassign_category_from_account(
         )
         .map_err(|e| e.to_string())?;
     Ok(true)
+}
+
+#[tauri::command]
+pub fn get_all_account_categories(
+    db: State<Mutex<Database>>,
+) -> Result<HashMap<i64, Vec<Category>>, String> {
+    let database = db.lock().map_err(|e| e.to_string())?;
+    let mut stmt = database
+        .conn()
+        .prepare(
+            "SELECT ac.account_id, c.id, c.name, c.icon, c.color, c.created_at, c.updated_at
+             FROM account_categories ac
+             INNER JOIN categories c ON c.id = ac.category_id
+             ORDER BY c.name ASC",
+        )
+        .map_err(|e| e.to_string())?;
+    let rows = stmt
+        .query_map([], |row| {
+            Ok((
+                row.get::<_, i64>(0)?,
+                Category {
+                    id: row.get(1)?,
+                    name: row.get(2)?,
+                    icon: row.get(3)?,
+                    color: row.get(4)?,
+                    created_at: row.get(5)?,
+                    updated_at: row.get(6)?,
+                },
+            ))
+        })
+        .map_err(|e| e.to_string())?;
+
+    let mut map: HashMap<i64, Vec<Category>> = HashMap::new();
+    for row in rows {
+        let (account_id, category) = row.map_err(|e| e.to_string())?;
+        map.entry(account_id).or_default().push(category);
+    }
+    Ok(map)
 }

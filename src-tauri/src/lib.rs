@@ -52,6 +52,7 @@ pub fn run() {
             commands::category::get_account_categories,
             commands::category::assign_category_to_account,
             commands::category::unassign_category_from_account,
+            commands::category::get_all_account_categories,
             commands::migration::parse_migration_qr,
             commands::note::get_notes,
             commands::note::get_note,

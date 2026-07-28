@@ -29,4 +29,8 @@ export const categoryService = {
   async unassignCategoryFromAccount(accountId: number, categoryId: number): Promise<boolean> {
     return invoke<boolean>('unassign_category_from_account', { accountId, categoryId })
   },
+
+  async getAllAccountCategories(): Promise<Record<number, Category[]>> {
+    return invoke<Record<number, Category[]>>('get_all_account_categories')
+  },
 }

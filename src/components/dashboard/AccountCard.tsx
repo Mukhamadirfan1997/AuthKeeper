@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import type { Account, OtpCode } from '@/types/account'
+import type { Category } from '@/types/category'
 
 interface AccountCardProps {
   account: Account
@@ -9,9 +10,10 @@ interface AccountCardProps {
   onClick: () => void
   onToggleFavorite: () => void
   showIssuer?: boolean
+  categories?: Category[]
 }
 
-export function AccountCard({ account, otp, error, remaining, onClick, onToggleFavorite, showIssuer = true }: AccountCardProps) {
+export function AccountCard({ account, otp, error, remaining, onClick, onToggleFavorite, showIssuer = true, categories }: AccountCardProps) {
   const [copied, setCopied] = useState(false)
 
   const copyCode = async (e: React.MouseEvent, code: string) => {
@@ -55,6 +57,18 @@ export function AccountCard({ account, otp, error, remaining, onClick, onToggleF
           ★
         </button>
       </div>
+      {categories && categories.length > 0 && (
+        <div className="flex flex-wrap gap-1 mb-2">
+          {categories.slice(0, 3).map((cat) => (
+            <span key={cat.id} className="text-xs bg-slate-700/50 text-text-secondary px-1.5 py-0.5 rounded">
+              {cat.icon} {cat.name}
+            </span>
+          ))}
+          {categories.length > 3 && (
+            <span className="text-xs text-text-secondary">+{categories.length - 3}</span>
+          )}
+        </div>
+      )}
       {error ? (
         <div className="mt-2 text-danger text-sm flex items-center gap-1">
           <span>⚠️</span> {error}
