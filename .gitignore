@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Signing keys (keep secret!)
+*.key
+*.password.txt
