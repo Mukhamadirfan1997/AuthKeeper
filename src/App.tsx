@@ -29,6 +29,7 @@ type AppPage =
   | { name: 'vault-form'; mode: 'add' | 'edit'; id?: number }
   | { name: 'notes' }
   | { name: 'note-form'; mode: 'add' | 'edit'; id?: number }
+  | { name: 'favorites' }
 
 function AppContent() {
   const { isAuthenticated, isFirstRun, isLoading, logout } = useAuth()
@@ -60,6 +61,9 @@ function AppContent() {
     switch (name) {
       case 'dashboard':
         setPage({ name: 'dashboard' })
+        break
+      case 'favorites':
+        setPage({ name: 'favorites' })
         break
       case 'account-detail':
         setPage({ name: 'account-detail', id: Number(params?.id) })
@@ -154,6 +158,8 @@ function AppContent() {
           onSaved={() => setPage({ name: 'notes' })}
         />
       )
+    case 'favorites':
+      return <Dashboard onNavigate={navigate} defaultFilter="favorites" />
     default:
       return <Dashboard onNavigate={navigate} />
   }

@@ -12,14 +12,15 @@ import type { Category } from '@/types/category'
 
 interface DashboardProps {
   onNavigate: (page: string, params?: Record<string, string>) => void
+  defaultFilter?: 'all' | 'favorites'
 }
 
-export function Dashboard({ onNavigate }: DashboardProps) {
+export function Dashboard({ onNavigate, defaultFilter }: DashboardProps) {
   const { isLarge } = useWindowSize()
   const [accounts, setAccounts] = useState<Account[]>([])
   const [otpMap, setOtpMap] = useState<Record<number, OtpCode>>({})
   const [search, setSearch] = useState('')
-  const [filter, setFilter] = useState<'all' | 'favorites'>('all')
+  const [filter, setFilter] = useState<'all' | 'favorites'>(defaultFilter || 'all')
   const [remainingMap, setRemainingMap] = useState<Record<number, number>>({})
   const [errorMap, setErrorMap] = useState<Record<number, string>>({})
   const [accountCategories, setAccountCategories] = useState<Record<number, Category[]>>({})
