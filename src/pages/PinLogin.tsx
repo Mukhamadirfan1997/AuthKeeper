@@ -23,11 +23,6 @@ export function PinLogin() {
     setTimeout(() => inputRef.current?.focus(), 100)
   }, [])
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [handleKeyDown])
-
   const handleInput = useCallback(async (digit: string) => {
     setError('')
     const next = pinRef.current + digit
@@ -59,6 +54,11 @@ export function PinLogin() {
       handleDelete()
     }
   }, [handleInput, handleDelete])
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
 
   const handleRecoverySubmit = async () => {
     setRecoveryError('')

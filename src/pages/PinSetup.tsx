@@ -95,14 +95,6 @@ export function PinSetup() {
     }
   }
 
-  const handleKeyDown = useCallback((e: KeyboardEvent) => {
-    if (e.key >= '0' && e.key <= '9') {
-      handleInput(e.key)
-    } else if (e.key === 'Backspace' || e.key === 'Delete') {
-      handleDelete()
-    }
-  }, [handleInput, handleDelete])
-
   const copyRecovery = async () => {
     try {
       await navigator.clipboard.writeText(recoveryKey)

@@ -1,11 +1,11 @@
 {
-  "version": "1.2.0",
-  "notes": "Lucide SVG icons, shadow cards, keyboard PIN input, bug fixes period 60s, password crypto generator, hapus entry vault/notes, import modal kustom",
+  "version": "1.2.1",
+  "notes": "Fix: keyboard PIN input via window listener, favicon seragam, Favorit nav dari halaman Catatan",
   "pub_date": "2026-07-29T00:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUbmlGa3hYL1JWUGxvMG1DbmVncXcvMStsVE1pdXZsSHNKMW56bmdrd2luUFpDTHVRbDVMeXdVS0FCTkVidlQ3dGFBNEd6UXpoMGRyWGNIVWcvVnYrK3RlT3hvV0hPYXdBPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1Mjg5NzkyCWZpbGU6QXV0aEtlZXBlcl8xLjIuMF94NjQtc2V0dXAuZXhlClp0SHI5R09oRmxsSkIzUXJHQ2U2NHZqZmszZUJHbUc0elhTZHFoM1lyU3A1YitEaDdJU0tjTnhuczVSZkZKMmdqNy9WVHBncmhoNTlFNUFKclE2YkRnPT0K",
-      "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.2.0/AuthKeeper_1.2.0_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUbmlGa3hYL1JWUG1UWkNjY1pkaCtCWjcvNlFnK3B1THJKNmJTLzljTis4cFpabFRHTFZ4RHhERlVkQmtmSmVRK3A5bHAxMFd2MFRucFpYOEppMlR1NWVRN1p6akVGMFFjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjkxNDA3CWZpbGU6QXV0aEtlZXBlcl8xLjIuMV94NjQtc2V0dXAuZXhlClBhTWdXOCtlb3ptNVV0bnQzRlU2QlpRdy9pTTFVVTBHc2V4UnYwd0ZUaG5TUk5XVXo0NzVzT1Y2aExXOGl6K0xTalNTNHNha2Rha2VJN0tkWVNjSkJnPT0K",
+      "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.2.1/AuthKeeper_1.2.1_x64-setup.exe"
     }
   }
 }
