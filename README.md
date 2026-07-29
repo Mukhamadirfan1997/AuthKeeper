@@ -2,7 +2,7 @@
 
 **Aplikasi Desktop Offline Manajemen TOTP, Password Vault & Secure Notes**
 
-![Version](https://img.shields.io/badge/version-1.1.0-blue)
+![Version](https://img.shields.io/badge/version-1.2.0-blue)
 ![Platform](https://img.shields.io/badge/platform-Windows%2010%2B-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
@@ -88,6 +88,13 @@ npx tauri build
 
 ## Rilis Terbaru
 
+### v1.2.0 (29 Juli 2026)
+- **UI Modern:** Semua icon diganti Lucide SVG icons, shadow cards
+- **Perbaikan:** Timer OTP period 60s, password generator pakai crypto.getRandomValues
+- **Perbaikan:** Input PIN bisa pakai keyboard laptop, search notes by content
+- **Baru:** Tombol hapus entry di Vault & Notes detail modal
+- **Baru:** Modal kustom untuk import backup (ganti prompt/confirm browser)
+
 ### v1.1.0 (28 Juli 2026)
 - **Baru:** Password Vault — simpan kata sandi terenkripsi
 - **Baru:** Secure Notes — catatan sensitif terenkripsi
@@ -109,7 +116,7 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Kontak
 
-**Creator:** MUKHAMAD IRFAN
+**Creator:** MUKHAMAD IRFAN — irfandev30@gmail.com
 
 ---
 
