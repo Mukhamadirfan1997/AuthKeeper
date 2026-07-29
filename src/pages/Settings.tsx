@@ -45,6 +45,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
   const oldPinRef = useRef('')
   const newPinRef = useRef('')
   const confirmPinRef = useRef('')
+  const changePinKeyRef = useRef((e: KeyboardEvent) => {})
 
   useEffect(() => {
     authService.hasRecoveryKey().then(setHasRecovery).catch(() => {})
@@ -52,6 +53,21 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
       setAutoLock(s.auto_lock)
     }).catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (!showChangePin) return
+    const handler = (e: KeyboardEvent) => changePinKeyRef.current(e)
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [showChangePin])
+
+  changePinKeyRef.current = (e: KeyboardEvent) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handleChangePinInput(e.key)
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleChangePinDelete()
+    }
+  }
 
   const handleAutoLockChange = async (val: number) => {
     setAutoLock(val)
@@ -211,14 +227,6 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
     } else {
       const n = confirmPinRef.current.slice(0, -1)
       confirmPinRef.current = n; setConfirmPin(n)
-    }
-  }
-
-  const handleChangePinKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key >= '0' && e.key <= '9') {
-      handleChangePinInput(e.key)
-    } else if (e.key === 'Backspace' || e.key === 'Delete') {
-      handleChangePinDelete()
     }
   }
 
@@ -407,9 +415,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
               inputMode="numeric"
               pattern="[0-9]*"
               maxLength={6}
-              readOnly
-              onKeyDown={handleChangePinKeyDown}
-              className="absolute opacity-0 pointer-events-none"
+              className="absolute opacity-0"
               autoComplete="off"
               aria-label="Input PIN"
             />

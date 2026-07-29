@@ -15,11 +15,23 @@ export function PinSetup() {
   const [fadeIn, setFadeIn] = useState(false)
   const pageRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const keyHandlerRef = useRef((e: KeyboardEvent) => {})
 
   useEffect(() => {
     setTimeout(() => setFadeIn(true), 50)
     setTimeout(() => inputRef.current?.focus(), 100)
+    const handler = (e: KeyboardEvent) => keyHandlerRef.current(e)
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
   }, [])
+
+  keyHandlerRef.current = (e: KeyboardEvent) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handleInput(e.key)
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleDelete()
+    }
+  }
 
   const handleInput = async (digit: string) => {
     setError('')
@@ -83,13 +95,13 @@ export function PinSetup() {
     }
   }
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key >= '0' && e.key <= '9') {
       handleInput(e.key)
     } else if (e.key === 'Backspace' || e.key === 'Delete') {
       handleDelete()
     }
-  }
+  }, [handleInput, handleDelete])
 
   const copyRecovery = async () => {
     try {
@@ -189,9 +201,7 @@ export function PinSetup() {
           inputMode="numeric"
           pattern="[0-9]*"
           maxLength={6}
-          readOnly
-          onKeyDown={handleKeyDown}
-          className="absolute opacity-0 pointer-events-none"
+          className="absolute opacity-0"
           autoComplete="off"
           aria-label="Input PIN"
         />

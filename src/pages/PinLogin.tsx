@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Numpad } from '@/components/common/Numpad'
 import { useAuth } from '@/contexts/AuthContext'
 import { authService } from '@/services/authService'
@@ -23,7 +23,12 @@ export function PinLogin() {
     setTimeout(() => inputRef.current?.focus(), 100)
   }, [])
 
-  const handleInput = async (digit: string) => {
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [handleKeyDown])
+
+  const handleInput = useCallback(async (digit: string) => {
     setError('')
     const next = pinRef.current + digit
     if (next.length <= 6) {
@@ -39,22 +44,21 @@ export function PinLogin() {
         setPin('')
       }
     }
-  }
+  }, [login])
 
-  const handleDelete = () => {
+  const handleDelete = useCallback(() => {
     setError('')
     pinRef.current = pinRef.current.slice(0, -1)
     setPin(pinRef.current)
-  }
+  }, [])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
     if (e.key >= '0' && e.key <= '9') {
       handleInput(e.key)
     } else if (e.key === 'Backspace' || e.key === 'Delete') {
       handleDelete()
-    } else if (e.key === 'Enter' && pin.length > 0) {
     }
-  }
+  }, [handleInput, handleDelete])
 
   const handleRecoverySubmit = async () => {
     setRecoveryError('')
@@ -185,9 +189,7 @@ export function PinLogin() {
           pattern="[0-9]*"
           maxLength={6}
           value={pin}
-          readOnly
-          onKeyDown={handleKeyDown}
-          className="absolute opacity-0 pointer-events-none"
+          className="absolute opacity-0"
           autoComplete="off"
           aria-label="Input PIN"
         />
