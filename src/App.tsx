@@ -159,9 +159,9 @@ function AppContent() {
         />
       )
     case 'favorites':
-      return <Dashboard onNavigate={navigate} defaultFilter="favorites" />
+      return <Dashboard key="favorites" onNavigate={navigate} defaultFilter="favorites" />
     default:
-      return <Dashboard onNavigate={navigate} />
+      return <Dashboard key="dashboard" onNavigate={navigate} />
   }
 }
 
