@@ -1,11 +1,11 @@
 {
-  "version": "1.2.1",
-  "notes": "Fix: keyboard PIN input via window listener, favicon seragam, Favorit nav dari halaman Catatan",
+  "version": "1.2.2",
+  "notes": "Fix: Favorit filter tidak reset, keyboard PIN input, favicon seragam, Favorit nav dari halaman Catatan",
   "pub_date": "2026-07-29T00:00:00Z",
   "platforms": {
     "windows-x86_64": {
-      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUbmlGa3hYL1JWUG1UWkNjY1pkaCtCWjcvNlFnK3B1THJKNmJTLzljTis4cFpabFRHTFZ4RHhERlVkQmtmSmVRK3A5bHAxMFd2MFRucFpYOEppMlR1NWVRN1p6akVGMFFjPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjkxNDA3CWZpbGU6QXV0aEtlZXBlcl8xLjIuMV94NjQtc2V0dXAuZXhlClBhTWdXOCtlb3ptNVV0bnQzRlU2QlpRdy9pTTFVVTBHc2V4UnYwd0ZUaG5TUk5XVXo0NzVzT1Y2aExXOGl6K0xTalNTNHNha2Rha2VJN0tkWVNjSkJnPT0K",
-      "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.2.1/AuthKeeper_1.2.1_x64-setup.exe"
+      "signature": "dW50cnVzdGVkIGNvbW1lbnQ6IHNpZ25hdHVyZSBmcm9tIHRhdXJpIHNlY3JldCBrZXkKUlVUbmlGa3hYL1JWUG0zTHVZOHVwdnEwbVl1RFBLZTZtYWJONzVWbGVtK1N1RDBjVUFocVVQUnNMOHJxQVBjc2JFUjZyejRHQmVlUUdBMFJlS3BGVSs0NVVNVzR0UWpjV3drPQp0cnVzdGVkIGNvbW1lbnQ6IHRpbWVzdGFtcDoxNzg1MjkxOTgzCWZpbGU6QXV0aEtlZXBlcl8xLjIuMl94NjQtc2V0dXAuZXhlCm4rQnpmSFZoZDVHaGoxL2psWURTemdXRHJaNUZQYlpwaE5BY0gxQmlTM0RIL0VISGxMemx0RzJ5Z2JzK0tReS9PamNVT3FvZ2YvL3BlcllhbHQ2YkNBPT0K",
+      "url": "https://github.com/Mukhamadirfan1997/AuthKeeper/releases/download/V1.2.2/AuthKeeper_1.2.2_x64-setup.exe"
     }
   }
 }

@@ -338,7 +338,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         <section>
           <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3 flex items-center gap-1.5"><Info size={16} /> Tentang</h2>
           <div className="bg-bg-card rounded-xl p-4 space-y-3 shadow-sm">
-            <p className="text-text-primary font-semibold">AuthKeeper v1.2.1</p>
+            <p className="text-text-primary font-semibold">AuthKeeper v1.2.2</p>
             <p className="text-text-secondary text-sm">Created by MUKHAMAD IRFAN</p>
             <p className="text-text-secondary text-sm">Tauri + React + TypeScript</p>
             <hr className="border-slate-700" />
