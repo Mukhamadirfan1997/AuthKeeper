@@ -1,7 +1,7 @@
 {
   "name": "authkeeper",
   "private": true,
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -17,6 +17,7 @@
     "@tauri-apps/plugin-updater": "^2.10.1",
     "html5-qrcode": "^2.3.8",
     "jsqr": "^1.4.0",
+    "lucide-react": "^1.27.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-router-dom": "^7.18.1"

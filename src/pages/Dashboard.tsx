@@ -1,4 +1,5 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Home, Star, Shield, BookOpen, ClipboardList, AlertTriangle, Camera, Plus } from 'lucide-react'
 import { AccountCard } from '@/components/dashboard/AccountCard'
 import { NavBar } from '@/components/dashboard/NavBar'
 import { Sidebar } from '@/components/dashboard/Sidebar'
@@ -6,7 +7,6 @@ import { useWindowSize } from '@/hooks/useWindowSize'
 import { accountService } from '@/services/accountService'
 import { totpService } from '@/services/totpService'
 import { categoryService } from '@/services/categoryService'
-import { getRemainingSeconds } from '@/utils/time'
 import type { Account, OtpCode, GenerateOtpAllResult } from '@/types/account'
 import type { Category } from '@/types/category'
 
@@ -24,6 +24,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
   const [errorMap, setErrorMap] = useState<Record<number, string>>({})
   const [accountCategories, setAccountCategories] = useState<Record<number, Category[]>>({})
   const [showWelcome, setShowWelcome] = useState(!localStorage.getItem('welcome_shown'))
+  const periodRef = useRef<Record<number, number>>({})
 
   const loadAccounts = useCallback(async () => {
     try {
@@ -33,6 +34,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       ])
       setAccounts(data)
       setAccountCategories(catMap)
+      const periods: Record<number, number> = {}
+      data.forEach((acc) => { periods[acc.id] = acc.period })
+      periodRef.current = periods
     } catch (e) {
       console.error('Failed to load accounts', e)
     }
@@ -57,17 +61,21 @@ export function Dashboard({ onNavigate }: DashboardProps) {
     loadAccounts()
     refreshOtps()
     const interval = setInterval(() => {
-      const rem = getRemainingSeconds(30)
-      setRemainingMap((prev) => {
-        const next: Record<number, number> = {}
-        Object.keys(prev).forEach((id) => {
-          next[Number(id)] = rem
-        })
-        return next
+      const periods = periodRef.current
+      const ids = Object.keys(periods)
+      if (ids.length === 0) return
+      const now = Math.floor(Date.now() / 1000)
+      const next: Record<number, number> = {}
+      let shouldRefresh = false
+      ids.forEach((idStr) => {
+        const id = Number(idStr)
+        const period = periods[id] || 30
+        const rem = period - (now % period)
+        next[id] = rem
+        if (rem === period) shouldRefresh = true
       })
-      if (rem === 30) {
-        refreshOtps()
-      }
+      setRemainingMap(next)
+      if (shouldRefresh) refreshOtps()
     }, 1000)
 
     return () => {
@@ -100,8 +108,8 @@ export function Dashboard({ onNavigate }: DashboardProps) {
       <div className="flex items-center justify-between mb-4">
         <div>
           {!isLarge && <h1 className="text-xl font-bold">AuthKeeper</h1>}
-          {isLarge && <h1 className="text-xl font-bold">
-            {filter === 'favorites' ? '⭐ Favorit' : '🏠 Beranda'}
+          {isLarge && <h1 className="text-xl font-bold flex items-center gap-2">
+            {filter === 'favorites' ? <><Star size={20} className="text-favorite" /> Favorit</> : <><Home size={20} /> Beranda</>}
           </h1>}
           {accounts.length > 0 && (
             <p className="text-text-secondary text-xs mt-0.5">{accounts.length} akun tersimpan</p>
@@ -110,9 +118,9 @@ export function Dashboard({ onNavigate }: DashboardProps) {
         <div className="flex gap-2">
           <button
             onClick={() => onNavigate('qr-import')}
-            className="bg-bg-card text-text-primary w-10 h-10 rounded-xl text-lg flex items-center justify-center border border-slate-700 hover:bg-slate-700/50 transition-colors"
+            className="bg-bg-card text-text-primary w-10 h-10 rounded-xl flex items-center justify-center border border-slate-700 hover:bg-slate-700/50 transition-colors"
           >
-            📷
+            <Camera size={20} />
           </button>
           <button
             onClick={() => onNavigate('account-form', { mode: 'add' })}
@@ -130,7 +138,7 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="text-center mb-5">
-              <div className="text-4xl mb-3">🔐</div>
+              <div className="mb-3 flex justify-center"><Shield size={48} className="text-accent" /></div>
               <h2 className="text-xl font-bold text-text-primary">AuthKeeper</h2>
               <p className="text-text-secondary text-xs">by MUKHAMAD IRFAN</p>
             </div>
@@ -141,14 +149,14 @@ export function Dashboard({ onNavigate }: DashboardProps) {
             </p>
 
             <div className="bg-bg-card rounded-xl p-4 text-sm space-y-2 mb-4">
-              <p className="text-text-primary font-semibold">📖 Panduan:</p>
+              <p className="text-text-primary font-semibold flex items-center gap-1"><BookOpen size={16} /> Panduan:</p>
               <p className="text-text-secondary">1. Tambah akun → tombol <strong>+</strong> atau scan QR</p>
-              <p className="text-text-secondary">2. Salin kode → tekan <strong>📋</strong> di kartu akun</p>
+              <p className="text-text-secondary">2. Salin kode → tekan <strong><ClipboardList size={14} className="inline" /></strong> di kartu akun</p>
               <p className="text-text-secondary">3. Cari akun → gunakan kolom pencarian</p>
             </div>
 
             <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 text-sm mb-5">
-              <p className="text-amber-400 font-semibold mb-1">⚠️ Backup Data Berkala!</p>
+              <p className="text-amber-400 font-semibold mb-1 flex items-center gap-1"><AlertTriangle size={16} /> Backup Data Berkala!</p>
               <p className="text-text-secondary">
                 Settings → Export Backup. Jika laptop rusak atau aplikasi error, 
                 backup bisa dipulihkan kapan saja.

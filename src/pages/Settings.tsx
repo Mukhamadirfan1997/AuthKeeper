@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useTheme } from '@/contexts/ThemeContext'
 import { authService } from '@/services/authService'
@@ -11,6 +11,7 @@ import { invoke } from '@tauri-apps/api/core'
 import { save, open } from '@tauri-apps/plugin-dialog'
 import { check } from '@tauri-apps/plugin-updater'
 import { relaunch } from '@tauri-apps/plugin-process'
+import { ArrowLeft, Shield, Key, Palette, Database, Download, Upload, Tag, Info, RefreshCw, Loader, LogOut, Check, AlertTriangle } from 'lucide-react'
 
 interface SettingsProps {
   onBack: () => void
@@ -35,6 +36,15 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
   const [updateStatus, setUpdateStatus] = useState<'idle' | 'checking' | 'available' | 'downloading' | 'uptodate' | 'error'>('idle')
   const [updateMsg, setUpdateMsg] = useState('')
   const [showCategories, setShowCategories] = useState(false)
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importPath, setImportPath] = useState('')
+  const [importKey, setImportKey] = useState('')
+  const [importKeyError, setImportKeyError] = useState('')
+  const [importConfirming, setImportConfirming] = useState(false)
+  const pinInputRef = useRef<HTMLInputElement>(null)
+  const oldPinRef = useRef('')
+  const newPinRef = useRef('')
+  const confirmPinRef = useRef('')
 
   useEffect(() => {
     authService.hasRecoveryKey().then(setHasRecovery).catch(() => {})
@@ -57,18 +67,18 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
       const update = await check()
       if (!update) {
         setUpdateStatus('uptodate')
-        setUpdateMsg('✅ Aplikasi sudah versi terbaru')
+        setUpdateMsg('Aplikasi sudah versi terbaru')
         return
       }
       setUpdateStatus('available')
       setUpdateMsg(`Versi ${update.version} tersedia!\n${update.body ? update.body : ''}`)
       setUpdateStatus('downloading')
       await update.downloadAndInstall()
-      setUpdateMsg('✅ Update berhasil diunduh. Aplikasi akan dimulai ulang...')
+      setUpdateMsg('Update berhasil diunduh. Aplikasi akan dimulai ulang...')
       await relaunch()
     } catch (e: any) {
       setUpdateStatus('error')
-      setUpdateMsg(`❌ Gagal: ${String(e)}`)
+      setUpdateMsg(`Gagal: ${String(e)}`)
     }
   }
 
@@ -82,7 +92,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
       })
       if (!path) return
       const key = await invoke<string>('export_backup', { path })
-      setBackupMsg(`✅ Backup berhasil!\nBackup Key: ${key}\nFile recovery: ${path}.recovery.txt`)
+      setBackupMsg(`Backup berhasil!\nBackup Key: ${key}\nFile recovery: ${path}.recovery.txt`)
     } catch (e: any) {
       setBackupError(String(e))
     }
@@ -97,19 +107,30 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         multiple: false,
       })
       if (!path) return
-
-      const key = prompt('Masukkan Backup Key (dari file .recovery.txt):')
-      if (!key || key.length < 6) {
-        setBackupError('Backup Key tidak valid')
-        return
-      }
-
-      if (!confirm('Import akan mengganti semua akun yang ada. Lanjutkan?')) return
-
-      await invoke('import_backup', { path, backupKey: key })
-      setBackupMsg('✅ Restore berhasil! Semua akun telah dipulihkan.')
+      setImportPath(path)
+      setImportKey('')
+      setImportKeyError('')
+      setImportConfirming(false)
+      setShowImportModal(true)
     } catch (e: any) {
       setBackupError(String(e))
+    }
+  }
+
+  const handleImportConfirm = async () => {
+    if (importKey.length < 6) {
+      setImportKeyError('Backup Key minimal 6 karakter')
+      return
+    }
+    setImportConfirming(true)
+    try {
+      await invoke('import_backup', { path: importPath, backupKey: importKey })
+      setShowImportModal(false)
+      setBackupMsg('Restore berhasil! Semua akun telah dipulihkan.')
+    } catch (e: any) {
+      setImportKeyError(String(e))
+    } finally {
+      setImportConfirming(false)
     }
   }
 
@@ -121,51 +142,58 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
     setConfirmPin('')
     setChangePinError('')
     setChangePinSuccess('')
+    oldPinRef.current = ''
+    newPinRef.current = ''
+    confirmPinRef.current = ''
+    setTimeout(() => pinInputRef.current?.focus(), 200)
   }
 
   const handleChangePinInput = (digit: string) => {
     setChangePinError('')
     setChangePinSuccess('')
     if (changePinStep === 'old') {
-      const next = oldPin + digit
-      if (next.length <= 6) setOldPin(next)
+      const next = oldPinRef.current + digit
+      if (next.length <= 6) { oldPinRef.current = next; setOldPin(next) }
       if (next.length === 6) {
-        setTimeout(() => setChangePinStep('new'), 200)
+        setTimeout(() => { setChangePinStep('new'); setTimeout(() => pinInputRef.current?.focus(), 200) }, 200)
       }
     } else if (changePinStep === 'new') {
-      const next = newPin + digit
-      if (next.length <= 6) setNewPin(next)
+      const next = newPinRef.current + digit
+      if (next.length <= 6) { newPinRef.current = next; setNewPin(next) }
       if (next.length === 6) {
-        setTimeout(() => setChangePinStep('confirm'), 200)
+        setTimeout(() => { setChangePinStep('confirm'); setTimeout(() => pinInputRef.current?.focus(), 200) }, 200)
       }
     } else {
-      const next = confirmPin + digit
-      if (next.length <= 6) setConfirmPin(next)
+      const next = confirmPinRef.current + digit
+      if (next.length <= 6) { confirmPinRef.current = next; setConfirmPin(next) }
       if (next.length === 6) {
-        if (next === newPin) {
-          authService.changePin(oldPin, newPin).then((ok) => {
+        if (next === newPinRef.current) {
+          authService.changePin(oldPinRef.current, newPinRef.current).then((ok) => {
             if (ok) {
-              setChangePinSuccess('✅ PIN berhasil diganti')
+              setChangePinSuccess('PIN berhasil diganti')
               setTimeout(() => setShowChangePin(false), 1500)
             } else {
               setChangePinError('PIN lama salah')
               setChangePinStep('old')
-              setOldPin('')
-              setNewPin('')
-              setConfirmPin('')
+              oldPinRef.current = ''; setOldPin('')
+              newPinRef.current = ''; setNewPin('')
+              confirmPinRef.current = ''; setConfirmPin('')
+              setTimeout(() => pinInputRef.current?.focus(), 200)
             }
           }).catch((e) => {
             setChangePinError(String(e))
             setChangePinStep('old')
-            setOldPin('')
-            setNewPin('')
-            setConfirmPin('')
+            oldPinRef.current = ''; setOldPin('')
+            newPinRef.current = ''; setNewPin('')
+            confirmPinRef.current = ''; setConfirmPin('')
+            setTimeout(() => pinInputRef.current?.focus(), 200)
           })
         } else {
           setChangePinError('PIN baru tidak cocok')
           setChangePinStep('new')
-          setNewPin('')
-          setConfirmPin('')
+          newPinRef.current = ''; setNewPin('')
+          confirmPinRef.current = ''; setConfirmPin('')
+          setTimeout(() => pinInputRef.current?.focus(), 200)
         }
       }
     }
@@ -175,29 +203,34 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
     setChangePinError('')
     setChangePinSuccess('')
     if (changePinStep === 'old') {
-      const n = oldPin.slice(0, -1)
-      setOldPin(n)
-      if (n.length < 6 && oldPin.length === 6) setChangePinStep('old')
+      const n = oldPinRef.current.slice(0, -1)
+      oldPinRef.current = n; setOldPin(n)
     } else if (changePinStep === 'new') {
-      const n = newPin.slice(0, -1)
-      setNewPin(n)
-      if (n.length < 6 && newPin.length === 6) setChangePinStep('old')
+      const n = newPinRef.current.slice(0, -1)
+      newPinRef.current = n; setNewPin(n)
     } else {
-      const n = confirmPin.slice(0, -1)
-      setConfirmPin(n)
-      if (n.length < 6 && confirmPin.length === 6) setChangePinStep('new')
+      const n = confirmPinRef.current.slice(0, -1)
+      confirmPinRef.current = n; setConfirmPin(n)
     }
   }
 
-  const changePinCurrentLength = changePinStep === 'old' ? oldPin.length : changePinStep === 'new' ? newPin.length : confirmPin.length
+  const handleChangePinKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handleChangePinInput(e.key)
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleChangePinDelete()
+    }
+  }
+
+  const changePinCurrentLength = changePinStep === 'old' ? oldPinRef.current.length : changePinStep === 'new' ? newPinRef.current.length : confirmPinRef.current.length
   const changePinDots = Array.from({ length: 6 }, (_, i) => i < changePinCurrentLength)
 
   const settingsContent = (
     <div className="flex-1 p-4 overflow-y-auto min-w-0 pb-20">
       <div className="flex items-center gap-3 mb-6">
         {!isLarge && (
-          <button onClick={onBack} className="text-text-secondary text-lg">
-            ←
+          <button onClick={onBack} className="text-text-secondary">
+            <ArrowLeft size={20} />
           </button>
         )}
         <h1 className="text-xl font-bold">Pengaturan</h1>
@@ -205,8 +238,8 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
 
       <div className="space-y-6 max-w-lg">
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🔒 Keamanan</h2>
-          <div className="bg-bg-card rounded-xl p-4 space-y-4">
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3 flex items-center gap-1.5"><Shield size={16} /> Keamanan</h2>
+          <div className="bg-bg-card rounded-xl p-4 space-y-4 shadow-sm">
             <button
               onClick={openChangePin}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
@@ -229,7 +262,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
             </div>
             {hasRecovery && (
               <div className="bg-amber-500/5 border border-amber-500/20 rounded-xl p-3">
-                <p className="text-amber-400 text-xs font-semibold mb-1">🔑 Kode Pemulihan Aktif</p>
+                <p className="text-amber-400 text-xs font-semibold mb-1 flex items-center gap-1"><Key size={14} /> Kode Pemulihan Aktif</p>
                 <p className="text-text-secondary text-xs">
                   Kode pemulihan sudah dibuat saat setup PIN. 
                   Cek file <code className="text-accent">.authkeeper.recovery.txt</code> 
@@ -241,15 +274,15 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">🎨 Tampilan</h2>
-          <div className="bg-bg-card rounded-xl p-4 space-y-4">
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3 flex items-center gap-1.5"><Palette size={16} /> Tampilan</h2>
+          <div className="bg-bg-card rounded-xl p-4 space-y-4 shadow-sm">
             <div className="flex items-center justify-between">
               <span className="text-text-primary">Theme</span>
               <button
                 onClick={toggleTheme}
                 className="px-4 py-1.5 rounded-lg bg-slate-700 text-text-primary border border-slate-600 hover:bg-slate-600 transition-colors"
               >
-                {theme === 'dark' ? '🌙 Dark' : '☀️ Light'}
+                {theme === 'dark' ? 'Dark' : 'Light'}
               </button>
             </div>
             <div className="flex items-center justify-between">
@@ -260,26 +293,26 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">💾 Data & Cadangan</h2>
-          <div className="bg-bg-card rounded-xl p-4 space-y-4">
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3 flex items-center gap-1.5"><Database size={16} /> Data & Cadangan</h2>
+          <div className="bg-bg-card rounded-xl p-4 space-y-4 shadow-sm">
             <button
               onClick={handleExport}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
             >
-              📥 Cadangkan Data
+              <span className="flex items-center gap-1.5"><Download size={16} /> Cadangkan Data</span>
             </button>
             <button
               onClick={handleImport}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
             >
-              📤 Pulihkan Data
+              <span className="flex items-center gap-1.5"><Upload size={16} /> Pulihkan Data</span>
             </button>
             <hr className="border-slate-700" />
             <button
               onClick={() => setShowCategories(true)}
               className="w-full text-left text-text-primary hover:text-accent transition-colors"
             >
-              🏷️ Kelola Kategori
+              <span className="flex items-center gap-1.5"><Tag size={16} /> Kelola Kategori</span>
             </button>
             {backupMsg && (
               <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-3">
@@ -295,9 +328,9 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
         </section>
 
         <section>
-          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3">ℹ️ Tentang</h2>
-          <div className="bg-bg-card rounded-xl p-4 space-y-3">
-            <p className="text-text-primary font-semibold">AuthKeeper v1.1.0</p>
+          <h2 className="text-text-secondary text-sm font-semibold uppercase mb-3 flex items-center gap-1.5"><Info size={16} /> Tentang</h2>
+          <div className="bg-bg-card rounded-xl p-4 space-y-3 shadow-sm">
+            <p className="text-text-primary font-semibold">AuthKeeper v1.2.0</p>
             <p className="text-text-secondary text-sm">Created by MUKHAMAD IRFAN</p>
             <p className="text-text-secondary text-sm">Tauri + React + TypeScript</p>
             <hr className="border-slate-700" />
@@ -306,7 +339,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
               disabled={updateStatus === 'checking' || updateStatus === 'downloading'}
               className="w-full text-left text-accent hover:text-accent/80 transition-colors disabled:text-text-secondary disabled:cursor-not-allowed"
             >
-              {updateStatus === 'checking' ? '⏳ Memeriksa...' : updateStatus === 'downloading' ? '📥 Mengunduh...' : '🔄 Periksa Pembaruan'}
+              <span className="flex items-center gap-1.5">{updateStatus === 'checking' ? <><Loader size={16} className="animate-spin" /> Memeriksa...</> : updateStatus === 'downloading' ? <><Download size={16} /> Mengunduh...</> : <><RefreshCw size={16} /> Periksa Pembaruan</>}</span>
             </button>
             {updateMsg && (
               <div className={`rounded-xl p-3 ${
@@ -330,7 +363,7 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
           onClick={logout}
           className="w-full py-3 rounded-xl bg-danger/10 text-danger font-semibold hover:bg-danger/20 transition-colors"
         >
-          🔒 Kunci Aplikasi
+          <span className="flex items-center gap-1.5"><LogOut size={16} /> Kunci Aplikasi</span>
         </button>
       </div>
 
@@ -362,13 +395,69 @@ export function Settings({ onBack, onNavigate }: SettingsProps) {
             </div>
 
             {changePinError && (
-              <p className="text-danger text-sm text-center mb-3">❌ {changePinError}</p>
+              <p className="text-danger text-sm text-center mb-3">{changePinError}</p>
             )}
             {changePinSuccess && (
               <p className="text-emerald-400 text-sm text-center mb-3">{changePinSuccess}</p>
             )}
 
+            <input
+              ref={pinInputRef}
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              readOnly
+              onKeyDown={handleChangePinKeyDown}
+              className="absolute opacity-0 pointer-events-none"
+              autoComplete="off"
+              aria-label="Input PIN"
+            />
             <Numpad onInput={handleChangePinInput} onDelete={handleChangePinDelete} />
+          </div>
+        </div>
+      )}
+
+      {showImportModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowImportModal(false)}>
+          <div className="bg-bg-primary rounded-2xl p-6 w-[90%] max-w-sm border border-slate-700" onClick={(e) => e.stopPropagation()}>
+            <h2 className="text-lg font-bold text-text-primary text-center mb-2 flex items-center justify-center gap-1.5"><Upload size={20} /> Pulihkan Data</h2>
+            <p className="text-text-secondary text-xs text-center mb-2">
+              Import akan <span className="text-danger font-semibold">mengganti semua akun yang ada</span>.
+              Pastikan Anda sudah mencadangkan data saat ini.
+            </p>
+
+            {!importConfirming ? (
+              <>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3 mb-4">
+                  <p className="text-amber-400 text-xs font-semibold mb-1 flex items-center gap-1"><AlertTriangle size={14} className="text-amber-400" /> Backup Key Diperlukan</p>
+                  <p className="text-text-secondary text-xs">
+                    Masukkan Backup Key dari file <code className="text-accent">.authkeeper.recovery.txt</code>
+                  </p>
+                </div>
+                <input
+                  type="text"
+                  value={importKey}
+                  onChange={(e) => { setImportKey(e.target.value); setImportKeyError('') }}
+                  placeholder="cth: aB3xK9mP2cR7vF1n"
+                  className="w-full px-4 py-2.5 rounded-xl bg-bg-card text-text-primary placeholder-text-secondary border border-slate-700 focus:outline-none focus:ring-2 focus:ring-accent font-mono text-center mb-3"
+                  autoFocus
+                />
+                {importKeyError && <p className="text-danger text-xs text-center mb-3">{importKeyError}</p>}
+                <div className="flex gap-2">
+                  <button onClick={() => setShowImportModal(false)} className="flex-1 py-2.5 rounded-xl bg-slate-700 text-text-primary font-semibold hover:bg-slate-600 transition-colors">
+                    Batal
+                  </button>
+                  <button onClick={handleImportConfirm} className="flex-1 py-2.5 rounded-xl bg-danger text-white font-semibold hover:opacity-90 transition-opacity">
+                    Pulihkan
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="text-center py-6">
+                <p className="text-text-secondary">Memulihkan data...</p>
+              </div>
+            )}
           </div>
         </div>
       )}

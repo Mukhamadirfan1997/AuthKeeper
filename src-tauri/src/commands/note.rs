@@ -242,7 +242,7 @@ pub fn search_notes(
         .conn()
         .prepare(
             "SELECT id, title, content, icon, category_id, favorite, created_at, updated_at
-             FROM secure_notes WHERE title LIKE ?1 ORDER BY title ASC",
+             FROM secure_notes WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY title ASC",
         )
         .map_err(|e| e.to_string())?;
     let rows = stmt

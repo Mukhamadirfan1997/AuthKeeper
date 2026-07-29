@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { ArrowLeft, Trash2, Pencil, ClipboardList, Clock, AlertTriangle } from 'lucide-react'
 import { useTotp } from '@/hooks/useTotp'
 import { accountService } from '@/services/accountService'
 import type { Account } from '@/types/account'
@@ -59,21 +60,21 @@ export function AccountDetail({ accountId, onBack, onEdit }: AccountDetailProps)
   return (
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-text-secondary text-lg">
-          ← Kembali
+        <button onClick={onBack} className="text-text-secondary flex items-center gap-1 text-sm">
+          <ArrowLeft size={18} /> Kembali
         </button>
         <div className="flex gap-2">
           <button
             onClick={() => setShowDeleteConfirm(true)}
-            className="text-danger text-sm"
+            className="text-danger text-sm flex items-center gap-1"
           >
-            🗑️ Hapus
+            <Trash2 size={16} /> Hapus
           </button>
           <button
             onClick={() => onEdit(account.id)}
-            className="text-accent text-sm"
+            className="text-accent text-sm flex items-center gap-1"
           >
-            ✏️ Ubah
+            <Pencil size={16} /> Ubah
           </button>
         </div>
       </div>
@@ -89,17 +90,17 @@ export function AccountDetail({ accountId, onBack, onEdit }: AccountDetailProps)
                 {otp.code.slice(0, 3)} {otp.code.slice(3)}
               </p>
               {hasClockSkew && (
-                <span className="text-amber-400 text-sm bg-amber-500/10 px-2 py-1 rounded-lg">
-                  🕐 Clock skew
+                <span className="text-amber-400 text-sm bg-amber-500/10 px-2 py-1 rounded-lg flex items-center gap-1">
+                  <Clock size={14} /> Clock skew
                 </span>
               )}
             </div>
 
             <button
               onClick={() => copyCode(otp.code)}
-              className="w-full max-w-xs py-3 rounded-xl bg-accent/10 text-accent font-semibold border border-accent/30 hover:bg-accent/20 transition-colors mb-4"
+              className="w-full max-w-xs py-3 rounded-xl bg-accent/10 text-accent font-semibold border border-accent/30 hover:bg-accent/20 transition-colors mb-4 flex items-center justify-center gap-2"
             >
-              {copied ? '✅ Tersalin!' : '📋 Salin Kode'}
+              {copied ? <><span className="text-emerald-400">✓</span> Tersalin!</> : <><ClipboardList size={18} /> Salin Kode</>}
             </button>
 
             <div className="flex gap-4 mb-4">
@@ -140,7 +141,7 @@ export function AccountDetail({ accountId, onBack, onEdit }: AccountDetailProps)
             className="bg-bg-primary rounded-2xl p-6 w-[90%] max-w-sm border border-slate-700 text-center"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="text-4xl mb-3">⚠️</div>
+            <div className="mb-3 flex justify-center"><AlertTriangle size={40} className="text-amber-400" /></div>
             <h3 className="text-lg font-bold text-text-primary mb-2">Hapus Akun?</h3>
             <p className="text-text-secondary text-sm mb-6">
               {account.issuer} - {account.label}<br />

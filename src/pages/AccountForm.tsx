@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { ArrowLeft, Save, Camera, Loader } from 'lucide-react'
 import jsQR from 'jsqr'
 import { invoke } from '@tauri-apps/api/core'
 import { accountService } from '@/services/accountService'
@@ -143,14 +144,14 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
   return (
     <div className="min-h-screen p-4">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-text-secondary text-lg">
-          ←
+        <button onClick={onBack} className="text-text-secondary">
+          <ArrowLeft size={20} />
         </button>
         <h1 className="text-xl font-bold">
           {mode === 'add' ? 'Tambah Akun' : 'Ubah Akun'}
         </h1>
-        <button onClick={handleSubmit} className="text-accent font-semibold">
-          💾 Simpan
+        <button onClick={handleSubmit} className="text-accent font-semibold flex items-center gap-1">
+          <Save size={16} /> Simpan
         </button>
       </div>
 
@@ -188,9 +189,9 @@ export function AccountForm({ mode, accountId, onBack, onSaved }: AccountFormPro
               <button
                 onClick={handleScanQr}
                 disabled={scanningQr}
-                className="bg-bg-card px-3 rounded-xl border border-slate-700 text-lg hover:bg-slate-700/50 transition-colors disabled:opacity-50"
+                className="bg-bg-card px-3 rounded-xl border border-slate-700 flex items-center justify-center hover:bg-slate-700/50 transition-colors disabled:opacity-50"
               >
-                {scanningQr ? '⏳' : '📷'}
+                {scanningQr ? <Loader size={20} className="animate-spin" /> : <Camera size={20} />}
               </button>
             </div>
             <input

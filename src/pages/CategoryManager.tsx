@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { categoryService } from '@/services/categoryService'
 import type { Category } from '@/types/category'
+import { Tag, Pencil, Trash2, X } from 'lucide-react'
 
 const ICON_OPTIONS = ['📁', '📧', '🌐', '💰', '💼', '🎓', '🏥', '🛒', '🎮', '📡', '🔧', '🎵', '📸', '🏠', '❤️', '⭐', '🔒', '📊', '✈️', '🎯']
 const COLOR_OPTIONS = ['#6366f1', '#3b82f6', '#8b5cf6', '#10b981', '#f59e0b', '#ef4444', '#ec4899', '#14b8a6', '#f97316', '#84cc16']
@@ -66,8 +67,8 @@ export function CategoryManager({ onClose }: CategoryManagerProps) {
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div className="bg-bg-primary rounded-2xl p-6 w-[90%] max-w-md border border-slate-700 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-text-primary">🏷️ Atur Kategori</h2>
-          <button onClick={onClose} className="text-text-secondary text-lg">✕</button>
+          <h2 className="text-lg font-bold text-text-primary flex items-center gap-2"><Tag size={20} /> Atur Kategori</h2>
+          <button onClick={onClose} className="text-text-secondary"><X size={20} /></button>
         </div>
 
         <div className="space-y-3 mb-6">
@@ -136,7 +137,7 @@ export function CategoryManager({ onClose }: CategoryManagerProps) {
                   </div>
                   <div className="flex gap-1">
                     <button onClick={() => startEdit(cat)}
-                      className="text-text-secondary hover:text-accent text-xs px-2 py-1">✏️</button>
+                      className="text-text-secondary hover:text-accent text-xs px-2 py-1"><Pencil size={14} /></button>
                     {deleteConfirm === cat.id ? (
                       <div className="flex gap-1">
                         <button onClick={() => handleDelete(cat.id)}
@@ -146,7 +147,7 @@ export function CategoryManager({ onClose }: CategoryManagerProps) {
                       </div>
                     ) : (
                       <button onClick={() => setDeleteConfirm(cat.id)}
-                        className="text-text-secondary hover:text-danger text-xs px-2 py-1">🗑️</button>
+                        className="text-text-secondary hover:text-danger text-xs px-2 py-1"><Trash2 size={14} /></button>
                     )}
                   </div>
                 </div>

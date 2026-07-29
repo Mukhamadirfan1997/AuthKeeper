@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Star, ClipboardList, AlertTriangle, Clock } from 'lucide-react'
 import type { Account, OtpCode } from '@/types/account'
 import type { Category } from '@/types/category'
 
@@ -36,15 +37,15 @@ export function AccountCard({ account, otp, error, remaining, onClick, onToggleF
   return (
     <div
       onClick={onClick}
-      className="bg-bg-card rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform"
+      className="bg-bg-card rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform shadow-sm"
     >
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2">
             {showIssuer && <h3 className="text-text-primary font-semibold">{account.issuer}</h3>}
             {hasClockSkew && (
-              <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded" title="Clock skew detected">
-                🕐
+              <span className="text-xs bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded flex items-center" title="Clock skew detected">
+                <Clock size={12} />
               </span>
             )}
           </div>
@@ -52,9 +53,9 @@ export function AccountCard({ account, otp, error, remaining, onClick, onToggleF
         </div>
         <button
           onClick={(e) => { e.stopPropagation(); onToggleFavorite() }}
-          className={`text-lg ${account.favorite ? 'text-favorite' : 'text-text-secondary'}`}
+          className={account.favorite ? 'text-favorite' : 'text-text-secondary'}
         >
-          ★
+          <Star size={18} fill={account.favorite ? 'currentColor' : 'none'} />
         </button>
       </div>
       {categories && categories.length > 0 && (
@@ -71,7 +72,7 @@ export function AccountCard({ account, otp, error, remaining, onClick, onToggleF
       )}
       {error ? (
         <div className="mt-2 text-danger text-sm flex items-center gap-1">
-          <span>⚠️</span> {error}
+          <AlertTriangle size={14} /> {error}
         </div>
       ) : otp && (
         <div className="mt-2">
@@ -81,10 +82,10 @@ export function AccountCard({ account, otp, error, remaining, onClick, onToggleF
             </p>
             <button
               onClick={(e) => copyCode(e, otp.code)}
-              className="text-text-secondary hover:text-accent transition-colors text-sm px-2 py-1 rounded-lg hover:bg-slate-700/50"
+              className="text-text-secondary hover:text-accent transition-colors px-2 py-1 rounded-lg hover:bg-slate-700/50"
               title="Salin kode"
             >
-              {copied ? '✅' : '📋'}
+              {copied ? <span className="text-emerald-400 text-xs font-semibold">Tersalin</span> : <ClipboardList size={16} />}
             </button>
           </div>
           <div className="flex items-center gap-2 mt-1">

@@ -1,3 +1,5 @@
+import { Home, Lock, FileText, Star, Settings } from 'lucide-react'
+
 interface NavBarProps {
   active: string
   onNavigate: (page: string) => void
@@ -5,11 +7,11 @@ interface NavBarProps {
 
 export function NavBar({ active, onNavigate }: NavBarProps) {
   const tabs = [
-    { key: 'dashboard', label: '🏠', text: 'Beranda' },
-    { key: 'vault', label: '🔐', text: 'Sandi' },
-    { key: 'notes', label: '📝', text: 'Catatan' },
-    { key: 'favorites', label: '⭐', text: 'Favorit' },
-    { key: 'settings', label: '⚙️', text: 'Atur' },
+    { key: 'dashboard', icon: <Home size={20} />, text: 'Beranda' },
+    { key: 'vault', icon: <Lock size={20} />, text: 'Sandi' },
+    { key: 'notes', icon: <FileText size={20} />, text: 'Catatan' },
+    { key: 'favorites', icon: <Star size={20} />, text: 'Favorit' },
+    { key: 'settings', icon: <Settings size={20} />, text: 'Atur' },
   ]
 
   return (
@@ -22,7 +24,7 @@ export function NavBar({ active, onNavigate }: NavBarProps) {
             active === tab.key ? 'text-accent' : 'text-text-secondary'
           }`}
         >
-          <span className="text-lg">{tab.label}</span>
+          {tab.icon}
           <span className="text-xs">{tab.text}</span>
         </button>
       ))}

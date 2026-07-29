@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Numpad } from '@/components/common/Numpad'
 import { useAuth } from '@/contexts/AuthContext'
 import { authService } from '@/services/authService'
+import { Key, Shield, ArrowLeft } from 'lucide-react'
 
 export function PinLogin() {
   const { login } = useAuth()
@@ -13,21 +14,28 @@ export function PinLogin() {
   const [recoveryError, setRecoveryError] = useState('')
   const [recoverySuccess, setRecoverySuccess] = useState(false)
   const [fadeIn, setFadeIn] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const pinRef = useRef('')
 
   useEffect(() => {
     setTimeout(() => setFadeIn(true), 50)
     authService.hasRecoveryKey().then(setHasRecovery).catch(() => {})
+    setTimeout(() => inputRef.current?.focus(), 100)
   }, [])
 
   const handleInput = async (digit: string) => {
     setError('')
-    const next = pin + digit
-    if (next.length <= 6) setPin(next)
+    const next = pinRef.current + digit
+    if (next.length <= 6) {
+      pinRef.current = next
+      setPin(next)
+    }
 
     if (next.length === 6) {
       const ok = await login(next)
       if (!ok) {
         setError('PIN salah')
+        pinRef.current = ''
         setPin('')
       }
     }
@@ -35,7 +43,17 @@ export function PinLogin() {
 
   const handleDelete = () => {
     setError('')
-    setPin((p) => p.slice(0, -1))
+    pinRef.current = pinRef.current.slice(0, -1)
+    setPin(pinRef.current)
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handleInput(e.key)
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleDelete()
+    } else if (e.key === 'Enter' && pin.length > 0) {
+    }
   }
 
   const handleRecoverySubmit = async () => {
@@ -63,7 +81,7 @@ export function PinLogin() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <div className="text-center">
-          <div className="text-5xl mb-4">✅</div>
+          <div className="flex items-center justify-center mb-4"><Shield size={48} className="text-emerald-400" /></div>
           <h1 className="text-2xl font-bold text-text-primary mb-2">Kode Valid!</h1>
           <p className="text-text-secondary text-sm">
             PIN sudah direset. Buat PIN baru...
@@ -78,7 +96,7 @@ export function PinLogin() {
       return (
         <div className="min-h-screen flex flex-col items-center justify-center px-6">
           <div className={`text-center mb-8 transition-all duration-500 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            <div className="text-5xl mb-4">🔑</div>
+            <div className="flex items-center justify-center mb-4"><Key size={48} className="text-accent" /></div>
             <h1 className="text-2xl font-bold text-text-primary">Lupa PIN</h1>
             <p className="text-text-secondary text-sm mt-2 mb-6 max-w-xs">
               Kode pemulihan tidak ditemukan.
@@ -98,7 +116,7 @@ export function PinLogin() {
               onClick={() => { setShowRecovery(false); setRecoveryInput(''); setRecoveryError('') }}
               className="w-full max-w-xs py-2 text-text-secondary text-sm hover:text-text-primary transition-colors"
             >
-               ← Kembali ke masuk
+               <span className="flex items-center justify-center gap-1.5"><ArrowLeft size={16} /> Kembali ke masuk</span>
             </button>
           </div>
         </div>
@@ -108,7 +126,7 @@ export function PinLogin() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <div className={`text-center mb-8 transition-all duration-500 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="text-5xl mb-4">🔑</div>
+          <div className="flex items-center justify-center mb-4"><Key size={48} className="text-accent" /></div>
           <h1 className="text-2xl font-bold text-text-primary">Kode Pemulihan</h1>
           <p className="text-text-secondary text-sm mt-2 mb-8 max-w-xs">
             Masukkan kode pemulihan dari file
@@ -141,7 +159,7 @@ export function PinLogin() {
             onClick={() => { setShowRecovery(false); setRecoveryInput(''); setRecoveryError('') }}
             className="w-full max-w-xs py-2 text-text-secondary text-sm hover:text-text-primary transition-colors"
           >
-            ← Kembali ke masuk
+            <span className="flex items-center justify-center gap-1.5"><ArrowLeft size={16} /> Kembali ke masuk</span>
           </button>
         </div>
       </div>
@@ -152,7 +170,7 @@ export function PinLogin() {
     <div className="min-h-screen flex flex-col items-center justify-center px-6">
       <div className={`text-center mb-8 transition-all duration-500 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-accent to-purple-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-accent/20">
-          <span className="text-3xl">🔐</span>
+            <Shield size={48} className="text-accent" />
         </div>
         <h1 className="text-2xl font-bold text-text-primary">AuthKeeper</h1>
         <p className="text-text-secondary text-sm mt-1">by MUKHAMAD IRFAN</p>
@@ -160,6 +178,19 @@ export function PinLogin() {
 
       <div className={`transition-all duration-300 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`} style={{ transitionDelay: '100ms' }}>
         <p className="text-text-secondary mb-6 text-sm text-center">Masukkan PIN</p>
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={6}
+          value={pin}
+          readOnly
+          onKeyDown={handleKeyDown}
+          className="absolute opacity-0 pointer-events-none"
+          autoComplete="off"
+          aria-label="Input PIN"
+        />
 
         <div className="flex gap-3 justify-center mb-8">
           {dots.map((filled, i) => (
@@ -177,7 +208,7 @@ export function PinLogin() {
 
         {error && (
           <div className="text-danger text-sm mb-4 text-center animate-pulse">
-            ❌ {error}
+            {error}
           </div>
         )}
       </div>

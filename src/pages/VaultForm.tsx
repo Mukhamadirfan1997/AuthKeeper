@@ -3,6 +3,7 @@ import { vaultService } from '@/services/vaultService'
 import { categoryService } from '@/services/categoryService'
 import type { CreateVaultEntryDTO, UpdateVaultEntryDTO } from '@/types/vault'
 import type { Category } from '@/types/category'
+import { ArrowLeft, Save, Eye, EyeOff, Dices } from 'lucide-react'
 
 interface VaultFormProps {
   mode: 'add' | 'edit'
@@ -42,9 +43,11 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
   const generatePassword = () => {
     setGenerating(true)
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-='
+    const array = new Uint32Array(generateLen)
+    crypto.getRandomValues(array)
     let result = ''
     for (let i = 0; i < generateLen; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length))
+      result += chars[array[i] % chars.length]
     }
     setPassword(result)
     setGenerating(false)
@@ -79,9 +82,9 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
   return (
     <div className="min-h-screen p-4">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-text-secondary text-lg">←</button>
+        <button onClick={onBack} className="text-text-secondary"><ArrowLeft size={20} /></button>
         <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Kata Sandi' : 'Ubah Kata Sandi'}</h1>
-        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Simpan</button>
+        <button onClick={handleSubmit} className="text-accent font-semibold flex items-center gap-1.5"><Save size={16} /> Simpan</button>
       </div>
 
       <div className="space-y-4">
@@ -111,7 +114,7 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-accent text-sm"
               >
-                {showPassword ? '🙈' : '👁️'}
+                {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
             </div>
             <button
@@ -119,7 +122,7 @@ export function VaultForm({ mode, entryId, onBack, onSaved }: VaultFormProps) {
               disabled={generating}
               className="bg-bg-card px-3 rounded-xl border border-slate-700 text-sm text-text-secondary hover:text-accent transition-colors disabled:opacity-50"
             >
-              🎲
+              <Dices size={16} />
             </button>
           </div>
           <div className="flex items-center gap-2 mt-2">

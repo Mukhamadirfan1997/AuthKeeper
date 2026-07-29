@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Numpad } from '@/components/common/Numpad'
 import { useAuth } from '@/contexts/AuthContext'
 import { authService } from '@/services/authService'
+import { Shield, Pencil, AlertTriangle, ClipboardList, Check } from 'lucide-react'
 
 export function PinSetup() {
   const { setupPin } = useAuth()
@@ -13,9 +14,11 @@ export function PinSetup() {
   const [copied, setCopied] = useState(false)
   const [fadeIn, setFadeIn] = useState(false)
   const pageRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     setTimeout(() => setFadeIn(true), 50)
+    setTimeout(() => inputRef.current?.focus(), 100)
   }, [])
 
   const handleInput = async (digit: string) => {
@@ -28,6 +31,7 @@ export function PinSetup() {
           setStep('confirm')
           setFadeIn(false)
           setTimeout(() => setFadeIn(true), 50)
+          setTimeout(() => inputRef.current?.focus(), 150)
         }, 200)
       }
     } else {
@@ -54,6 +58,7 @@ export function PinSetup() {
             setPin('')
             setStep('create')
             setFadeIn(true)
+            setTimeout(() => inputRef.current?.focus(), 150)
           }, 300)
         }
       }
@@ -72,8 +77,17 @@ export function PinSetup() {
         setTimeout(() => {
           setStep('create')
           setFadeIn(true)
+          setTimeout(() => inputRef.current?.focus(), 150)
         }, 200)
       }
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key >= '0' && e.key <= '9') {
+      handleInput(e.key)
+    } else if (e.key === 'Backspace' || e.key === 'Delete') {
+      handleDelete()
     }
   }
 
@@ -94,7 +108,7 @@ export function PinSetup() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-6">
         <div className={`text-center transition-all duration-500 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          <div className="text-5xl mb-4">🔐</div>
+          <div className="flex items-center justify-center mb-4"><Shield size={48} className="text-accent" /></div>
           <h1 className="text-2xl font-bold text-text-primary">PIN Tersimpan!</h1>
           <p className="text-text-secondary text-sm mt-2 mb-8">
             Simpan kode pemulihan ini di tempat aman.
@@ -102,8 +116,8 @@ export function PinSetup() {
           </p>
 
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-5 mb-6 max-w-sm mx-auto">
-            <p className="text-xs text-amber-400 font-semibold mb-2 uppercase tracking-wide">
-              ⚠️ Kode Pemulihan
+            <p className="text-xs text-amber-400 font-semibold mb-2 uppercase tracking-wide flex items-center gap-1.5">
+              <AlertTriangle size={16} className="text-amber-400" />Kode Pemulihan
             </p>
             <p className="text-3xl font-bold text-text-primary tracking-[0.3em] font-mono mb-4">
               {recoveryKey}
@@ -112,7 +126,7 @@ export function PinSetup() {
               onClick={copyRecovery}
               className="px-6 py-2 rounded-xl bg-amber-500/20 text-amber-400 font-semibold hover:bg-amber-500/30 transition-colors text-sm"
             >
-              {copied ? '✅ Tersalin!' : '📋 Salin Kode'}
+              {copied ? <span className="flex items-center gap-1.5"><Check size={16} /> Tersalin!</span> : <span className="flex items-center gap-1.5"><ClipboardList size={16} /> Salin Kode</span>}
             </button>
           </div>
 
@@ -136,7 +150,7 @@ export function PinSetup() {
     <div ref={pageRef} className="min-h-screen flex flex-col items-center justify-center px-6">
       <div className={`text-center mb-8 transition-all duration-500 ${fadeIn ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
         <div className="text-5xl mb-4">
-          {step === 'create' ? '🔐' : '✍️'}
+          {step === 'create' ? <Shield size={48} className="text-accent" /> : <Pencil size={48} className="text-accent" />}
         </div>
         <h1 className="text-2xl font-bold text-text-primary">AuthKeeper</h1>
         <p className="text-text-secondary text-sm mt-1">by MUKHAMAD IRFAN</p>
@@ -163,12 +177,24 @@ export function PinSetup() {
 
         {error && (
           <div className="text-danger text-sm mb-4 text-center animate-pulse">
-            ❌ {error}
+            {error}
           </div>
         )}
       </div>
 
       <div className={`transition-all duration-500 ${fadeIn ? 'opacity-100' : 'opacity-0'}`}>
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
+          maxLength={6}
+          readOnly
+          onKeyDown={handleKeyDown}
+          className="absolute opacity-0 pointer-events-none"
+          autoComplete="off"
+          aria-label="Input PIN"
+        />
         <Numpad onInput={handleInput} onDelete={handleDelete} />
       </div>
     </div>

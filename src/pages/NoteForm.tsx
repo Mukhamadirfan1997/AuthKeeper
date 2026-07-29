@@ -3,6 +3,7 @@ import { noteService } from '@/services/noteService'
 import { categoryService } from '@/services/categoryService'
 import type { CreateNoteDTO, UpdateNoteDTO } from '@/types/note'
 import type { Category } from '@/types/category'
+import { ArrowLeft, Save } from 'lucide-react'
 
 interface NoteFormProps {
   mode: 'add' | 'edit'
@@ -53,9 +54,9 @@ export function NoteForm({ mode, noteId, onBack, onSaved }: NoteFormProps) {
   return (
     <div className="min-h-screen p-4 flex flex-col">
       <div className="flex items-center justify-between mb-6">
-        <button onClick={onBack} className="text-text-secondary text-lg">←</button>
+        <button onClick={onBack} className="text-text-secondary"><ArrowLeft size={20} /></button>
         <h1 className="text-xl font-bold">{mode === 'add' ? 'Tambah Catatan' : 'Ubah Catatan'}</h1>
-        <button onClick={handleSubmit} className="text-accent font-semibold">💾 Simpan</button>
+        <button onClick={handleSubmit} className="text-accent font-semibold"><span className="flex items-center gap-1.5"><Save size={16} /> Simpan</span></button>
       </div>
 
       <div className="space-y-4 flex-1 flex flex-col">
@@ -92,7 +93,7 @@ export function NoteForm({ mode, noteId, onBack, onSaved }: NoteFormProps) {
 
         <button onClick={handleSubmit}
           className="w-full py-3 rounded-xl bg-accent text-white font-semibold hover:opacity-90 transition-opacity mt-2">
-          💾 Simpan
+          <span className="flex items-center gap-1.5"><Save size={16} /> Simpan</span>
         </button>
       </div>
     </div>

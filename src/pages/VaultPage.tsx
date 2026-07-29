@@ -6,6 +6,7 @@ import { Sidebar } from '@/components/dashboard/Sidebar'
 import { useWindowSize } from '@/hooks/useWindowSize'
 import type { VaultEntry } from '@/types/vault'
 import type { Category } from '@/types/category'
+import { Lock, Key, Star, Eye, EyeOff, ClipboardList, Pencil, Trash2, X, Check } from 'lucide-react'
 
 interface VaultPageProps {
   onNavigate: (page: string, params?: Record<string, string>) => void
@@ -20,6 +21,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
   const [selected, setSelected] = useState<VaultEntry | null>(null)
   const [showPassword, setShowPassword] = useState<Record<number, boolean>>({})
   const [copied, setCopied] = useState<Record<number, boolean>>({})
+  const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null)
 
   const load = useCallback(async () => {
     try {
@@ -52,12 +54,21 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
   const getCategoryInfo = (catId: number | null) =>
     categories.find((c) => c.id === catId)
 
+  const handleDelete = async (id: number) => {
+    try {
+      await vaultService.deleteEntry(id)
+      setDeleteConfirm(null)
+      setSelected(null)
+      load()
+    } catch {}
+  }
+
   const entryDetail = selected ? (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setSelected(null)}>
       <div className="bg-bg-primary rounded-2xl p-6 w-[90%] max-w-sm border border-slate-700" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-text-primary">{selected.icon || '🔑'} {selected.name}</h2>
-          <button onClick={() => setSelected(null)} className="text-text-secondary text-lg">✕</button>
+          <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">{selected.icon || <Key size={20} />} {selected.name}</h2>
+          <button onClick={() => setSelected(null)} className="text-text-secondary"><X size={20} /></button>
         </div>
         <div className="space-y-3 text-sm">
           {selected.username && (
@@ -76,13 +87,13 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
                 onClick={() => setShowPassword((p) => ({ ...p, [selected.id]: !p[selected.id] }))}
                 className="text-text-secondary hover:text-accent text-xs"
               >
-                {showPassword[selected.id] ? '🙈' : '👁️'}
+                {showPassword[selected.id] ? <EyeOff size={16} /> : <Eye size={16} />}
               </button>
               <button
                 onClick={() => copyPassword(selected.id, selected.password)}
                 className="text-text-secondary hover:text-accent text-xs"
               >
-                {copied[selected.id] ? '✅' : '📋'}
+                {copied[selected.id] ? <Check size={16} /> : <ClipboardList size={16} />}
               </button>
             </div>
           </div>
@@ -110,19 +121,31 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
             onClick={() => { onNavigate('vault-form', { mode: 'edit', id: String(selected.id) }); setSelected(null) }}
             className="flex-1 py-2.5 rounded-xl bg-accent/10 text-accent font-semibold border border-accent/30 hover:bg-accent/20 transition-colors"
           >
-            ✏️ Ubah
+            <span className="flex items-center gap-1.5"><Pencil size={16} /> Ubah</span>
           </button>
           <button
             onClick={async () => {
               await vaultService.toggleFavorite(selected.id)
               load()
-              setSelected(null)
             }}
             className="flex-1 py-2.5 rounded-xl bg-slate-700 text-text-primary font-semibold hover:bg-slate-600 transition-colors"
           >
-            {selected.favorite ? '⭐ Hapus Favorit' : '⭐ Favorit'}
+            <span className="flex items-center gap-1.5">{selected.favorite ? <><Star size={16} fill="currentColor" /> Hapus Favorit</> : <><Star size={16} /> Favorit</>}</span>
+          </button>
+          <button
+            onClick={() => setDeleteConfirm(selected.id)}
+            className="py-2.5 px-3 rounded-xl bg-danger/10 text-danger font-semibold hover:bg-danger/20 transition-colors"
+          >
+            <Trash2 size={16} />
           </button>
         </div>
+        {deleteConfirm === selected.id && (
+          <div className="flex gap-2 mt-3 pt-3 border-t border-slate-700">
+            <p className="text-xs text-text-secondary flex-1">Hapus entry ini?</p>
+            <button onClick={() => handleDelete(selected.id)} className="text-xs text-danger font-semibold hover:opacity-80">Hapus</button>
+            <button onClick={() => setDeleteConfirm(null)} className="text-xs text-text-secondary hover:text-text-primary">Batal</button>
+          </div>
+        )}
       </div>
     </div>
   ) : null
@@ -130,7 +153,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
   const mainContent = (
     <div className="flex-1 p-4 overflow-y-auto min-w-0 pb-20">
       <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold">🔐 Kata Sandi</h1>
+        <h1 className="text-xl font-bold flex items-center gap-2"><Lock size={20} /> Kata Sandi</h1>
         <button
           onClick={() => onNavigate('vault-form', { mode: 'add' })}
           className="bg-accent text-white w-10 h-10 rounded-xl text-2xl flex items-center justify-center hover:opacity-90 transition-opacity"
@@ -158,7 +181,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
           onClick={() => setFilterFav(true)}
           className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors ${filterFav ? 'bg-accent text-white' : 'bg-bg-card text-text-secondary'}`}
         >
-          ⭐ Favorit
+          <span className="flex items-center gap-1"><Star size={14} /> Favorit</span>
         </button>
       </div>
 
@@ -169,14 +192,14 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
             <div
               key={entry.id}
               onClick={() => setSelected(entry)}
-              className="bg-bg-card rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform"
+              className="bg-bg-card rounded-xl p-4 cursor-pointer active:scale-[0.98] transition-transform shadow-sm"
             >
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-lg">{entry.icon || '🔑'}</span>
+                    <span className="flex items-center justify-center w-6 h-6">{entry.icon || <Key size={20} />}</span>
                     <h3 className="text-text-primary font-semibold">{entry.name}</h3>
-                    {entry.favorite && <span className="text-favorite text-xs">★</span>}
+                    {entry.favorite && <Star size={12} className="text-favorite" fill="currentColor" />}
                   </div>
                   {entry.username && (
                     <p className="text-text-secondary text-sm ml-8">{entry.username}</p>
@@ -186,7 +209,7 @@ export function VaultPage({ onNavigate }: VaultPageProps) {
                   onClick={(e) => { e.stopPropagation(); vaultService.toggleFavorite(entry.id).then(load) }}
                   className={`text-lg ${entry.favorite ? 'text-favorite' : 'text-text-secondary'}`}
                 >
-                  ★
+                  <Star size={16} fill={entry.favorite ? 'currentColor' : 'none'} />
                 </button>
               </div>
               <div className="flex items-center gap-2 ml-8">
